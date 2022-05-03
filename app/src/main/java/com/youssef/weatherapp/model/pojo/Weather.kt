@@ -16,7 +16,7 @@ data class Weather(
 ): Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    val id: Long = 0
+    var id: Long = 0
 
     @SerializedName("timezone_offset")
     var timezoneOffset: Long = 0
