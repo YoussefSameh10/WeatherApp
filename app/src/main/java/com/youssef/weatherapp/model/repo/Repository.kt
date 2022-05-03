@@ -2,54 +2,67 @@ package com.youssef.weatherapp.model.repo
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSourceInterface
 import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourceInterface
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.pojo.Weather
 import com.youssef.weatherapp.model.pojo.WeatherAlert
+import com.youssef.weatherapp.model.pojo.types.LanguageType
+import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
+import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
+import com.youssef.weatherapp.utils.NetworkConnectivity
 import retrofit2.Response
 
 class Repository private constructor(
+    val context: Context,
     var localSource: LocalDataSourceInterface,
-    var remoteSource: RemoteDataSourceInterface
+    var remoteSource: RemoteDataSourceInterface,
+    var language: LanguageType,
+    var temperatureUnit: TemperatureUnitType,
 ): RepositoryInterface {
 
     companion object {
         private var instance: RepositoryInterface? = null
 
-        fun getInstance(context: Context, localSource: LocalDataSourceInterface, remoteSource: RemoteDataSourceInterface): RepositoryInterface {
+        fun getInstance(
+            context: Context,
+            localSource: LocalDataSourceInterface,
+            remoteSource: RemoteDataSourceInterface,
+            language: LanguageType,
+            temperatureUnit: TemperatureUnitType,
+        ): RepositoryInterface {
             if(instance == null) {
-                instance = Repository(localSource, remoteSource)
+                instance = Repository(context, localSource, remoteSource, language, temperatureUnit)
             }
             return instance as RepositoryInterface
         }
     }
 
-    override fun getWeather(
-        latitude: Double,
-        longitude: Double,
-        unit: String,
-        language: String,
-        apiKey: String
-    ): Response<LiveData<Weather>> {
-        return remoteSource.getWeather(latitude, longitude, unit, language)
+
+    private fun getWeatherRemote(latitude: Double, longitude: Double): LiveData<Weather> {
+        val response = remoteSource.getWeather(latitude, longitude, temperatureUnit.toString(), language.toString())
+        return if(response.isSuccessful) {
+            response.body() ?: MutableLiveData()
+        } else {
+            MutableLiveData()
+        }
     }
 
-    override fun getTodaysAlerts(
-        latitude: Double,
-        longitude: Double,
-        unit: String,
-        language: String,
-        apiKey: String
-    ): Response<LiveData<List<WeatherAlert>>> {
-        return remoteSource.getTodaysAlerts(latitude, longitude, unit, language)
+    private fun getWeatherLocal(latitude: Double, longitude: Double): LiveData<Weather> {
+        return localSource.getWeather(latitude, longitude)
     }
-
-
 
     override fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
-        return localSource.getWeather(latitude, longitude)
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            return getWeatherRemote(latitude, longitude)
+        }
+        return getWeatherLocal(latitude, longitude)
+    }
+
+    override fun getTodaysAlerts(latitude: Double, longitude: Double): Response<LiveData<List<WeatherAlert>>> {
+        return remoteSource.getTodaysAlerts(latitude, longitude, temperatureUnit.toString(), language.toString())
     }
 
     override fun getScheduledAlerts(): LiveData<List<ScheduledAlert>> {

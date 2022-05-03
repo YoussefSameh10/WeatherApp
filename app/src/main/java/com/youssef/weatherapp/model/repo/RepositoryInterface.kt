@@ -12,13 +12,13 @@ import retrofit2.http.Query
 
 interface RepositoryInterface {
 
-    fun getWeather(latitude: Double, longitude: Double, unit: String,
-                   language: String, apiKey: String = BuildConfig.WEATHER_API_KEY): Response<LiveData<Weather>>
-
-    fun getTodaysAlerts(latitude: Double, longitude: Double, unit: String,
-        language: String, apiKey: String = BuildConfig.WEATHER_API_KEY): Response<LiveData<List<WeatherAlert>>>
-
     fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+
+    //fun getWeatherRemote(latitude: Double, longitude: Double): Response<LiveData<Weather>>
+
+    fun getTodaysAlerts(latitude: Double, longitude: Double): Response<LiveData<List<WeatherAlert>>>
+
+    //fun getWeatherLocal(latitude: Double, longitude: Double): LiveData<Weather>
 
     fun getScheduledAlerts(): LiveData<List<ScheduledAlert>>
     fun addScheduledAlert(scheduledAlert: ScheduledAlert)
