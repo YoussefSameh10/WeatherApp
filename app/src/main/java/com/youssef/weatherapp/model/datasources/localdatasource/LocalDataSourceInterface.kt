@@ -16,6 +16,9 @@ interface LocalDataSourceInterface {
     fun deleteScheduledAlert(scheduledAlert: ScheduledAlert)
 
     fun getFavoriteLocations(): LiveData<List<Location>>
+    fun getCurrentLocation(): LiveData<Location>
     fun addFavoriteLocation(location: Location)
     fun deleteFavoriteLocation(location: Location)
+    fun addCurrentLocation(location: Location)
+
 }

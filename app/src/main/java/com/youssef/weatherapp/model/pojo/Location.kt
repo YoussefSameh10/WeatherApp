@@ -4,4 +4,4 @@ import androidx.room.Entity
 import java.io.Serializable
 
 @Entity(tableName = "location", primaryKeys = ["latitude", "longitude"])
-data class Location(var latitude: Double, var longitude: Double, var name: String): Serializable
+data class Location(var latitude: Double, var longitude: Double, var name: String, var isCurrent: Boolean): Serializable

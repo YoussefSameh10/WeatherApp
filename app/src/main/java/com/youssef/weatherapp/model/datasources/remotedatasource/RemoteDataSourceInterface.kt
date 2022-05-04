@@ -17,7 +17,7 @@ interface RemoteDataSourceInterface {
         @Query("units") unit: String,
         @Query("lang") language: String,
         @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
-    ): Response<LiveData<Weather>>
+    ): Response<Weather>
 
     @GET("onecall?exclude=current,minutely,hourly,daily")
     fun getTodaysAlerts(
@@ -26,5 +26,14 @@ interface RemoteDataSourceInterface {
         @Query("units") unit: String,
         @Query("lang") language: String,
         @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
-    ): Response<LiveData<List<WeatherAlert>>>
+    ): Response<List<WeatherAlert>>
+
+    @GET("onecall?exclude=current,minutely,hourly,daily,alerts")
+    suspend fun getCityName(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("units") unit: String,
+        @Query("lang") language: String,
+        @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
+    ): Response<Weather>
 }

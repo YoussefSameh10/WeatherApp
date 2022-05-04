@@ -6,12 +6,21 @@ import com.youssef.weatherapp.model.pojo.Location
 
 @Dao
 interface LocationDAO {
-    @Query("SELECT * FROM location")
+    @Query("SELECT * FROM location WHERE isCurrent = 0")
     fun getFavoriteLocations(): LiveData<List<Location>>
+
+    @Query("SELECT DISTINCT * FROM location WHERE isCurrent = 1")
+    fun getCurrentLocation(): LiveData<Location>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addFavoriteLocation(location: Location)
 
     @Delete
     fun deleteFavoriteLocation(location: Location)
+
+    @Insert
+    fun addCurrentLocation(location: Location)
+
+    @Query("DELETE FROM location WHERE isCurrent=1")
+    fun deleteCurrentLocation()
 }

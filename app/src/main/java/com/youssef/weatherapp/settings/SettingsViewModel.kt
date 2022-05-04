@@ -1,0 +1,123 @@
+package com.youssef.weatherapp.settings
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.os.Looper
+import android.provider.Settings
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.youssef.weatherapp.model.pojo.Location
+import com.youssef.weatherapp.model.pojo.types.LanguageType
+import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
+import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
+import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.utils.Constants
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : ViewModel() {
+
+    var settingsModel: SettingsModel = SettingsModel(repo)
+
+    var currentLoc: MutableLiveData<Location> = MutableLiveData()
+    lateinit var cityName: String
+
+    private fun getCityName(latitude: Double, longitude: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val cityNameLive = settingsModel.getCityName(latitude, longitude)
+            withContext(Dispatchers.Main) {
+                cityNameLive.observe(owner) {
+                    cityName = it
+                    Log.i("TAG", "getCityName: ")
+                    setCurrentLocation(Location(latitude, longitude, cityName, isCurrent = true))
+                }
+            }
+        }
+    }
+
+    private fun setCurrentLocation(location: Location) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.i("TAG", "setCurrentLocation: ")
+            currentLoc.postValue(location)
+            settingsModel.setCurrentLocation(location)
+        }
+    }
+
+    fun getLanguagePreference(): LanguageType {
+        return settingsModel.getLanguagePreference()
+    }
+
+    fun getTemperatureUnitPreference(): TemperatureUnitType {
+        return settingsModel.getTemperatureUnitPreference()
+    }
+
+    fun getSpeedUnitPreference(): SpeedUnitType {
+        return settingsModel.getSpeedUnitPreference()
+    }
+
+    fun setLanguage(language: LanguageType) {
+        settingsModel.setLanguage(language)
+    }
+
+    fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
+        settingsModel.setTemperatureUnit(temperatureUnit)
+    }
+
+    fun setSpeedUnit(speedUnit: SpeedUnitType) {
+        settingsModel.setSpeedUnit(speedUnit)
+    }
+
+    fun handleGPS(activity: FragmentActivity, context: Context) {
+        if(!checkLocationPermitted(context)) {
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+                Constants.GPS_PERMISSION_CODE
+            )
+        }
+        val locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            activity.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
+        getLocation(activity)
+
+    }
+
+    private fun checkLocationPermitted(context: Context): Boolean {
+        return (
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED
+                )
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getLocation(activity: FragmentActivity) {
+        val client = LocationServices.getFusedLocationProviderClient(activity)
+        val locationRequest = LocationRequest.create()
+        locationRequest.interval =1000
+        locationRequest.fastestInterval = 100
+        locationRequest.numUpdates = 1
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        val locationCallback = object: LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                Log.i("TAG", "onLocationResult: ${locationResult.lastLocation.latitude}, ${locationResult.lastLocation.longitude}")
+                getCityName(locationResult.lastLocation.latitude, locationResult.lastLocation.longitude)
+            }
+        }
+        client.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper()!!)
+    }
+
+}
