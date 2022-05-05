@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-@Entity(tableName = "weather")
+@Entity(tableName = "weather", primaryKeys = ["latitude", "longitude"])
 data class Weather(
     @SerializedName("lat")
     var latitude: Double,
@@ -14,9 +14,12 @@ data class Weather(
     var longitude: Double
 
 ): Serializable {
-
+/*
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
+*/
+    @SerializedName("timezone")
+    var timezone: String = ""
 
     @SerializedName("timezone_offset")
     var timezoneOffset: Long = 0
@@ -36,12 +39,14 @@ data class Weather(
     constructor(
         latitude: Double,
         longitude: Double,
+        timezone: String,
         timezoneOffset: Long,
         currentWeather: CurrentWeather,
         hourlyWeather: List<CurrentWeather>,
         dailyWeather: List<DailyWeather>,
         weatherAlerts: List<WeatherAlert>
     ): this(latitude, longitude) {
+        this.timezone = timezone
         this.timezoneOffset = timezoneOffset
         this.currentWeather = currentWeather
         this.hourlyWeather = hourlyWeather

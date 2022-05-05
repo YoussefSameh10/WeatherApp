@@ -12,6 +12,10 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.youssef.weatherapp.databinding.ActivityMainBinding
+import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
+import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
+import com.youssef.weatherapp.model.repo.Repository
+import retrofit2.create
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +24,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setLanguageAsPreferred()
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,6 +37,8 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -37,9 +46,12 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.nav_home, R.id.nav_favorites, R.id.nav_settings, R.id.nav_alerts
             ), drawerLayout
         )
+
+
+        binding.navView.itemIconTintList = null
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -53,5 +65,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun setLanguageAsPreferred() {
+        Repository
+            .getInstance(
+                this,
+                LocalDataSource.getInstance(this),
+                RetrofitHelper.getInstance().create()
+            )
+            .initLanguage()
     }
 }

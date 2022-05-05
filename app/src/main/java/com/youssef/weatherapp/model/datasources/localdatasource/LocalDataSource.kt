@@ -50,6 +50,10 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
         return locationDAO.getFavoriteLocations()
     }
 
+    override fun getCurrentLocation(): LiveData<Location> {
+        return locationDAO.getCurrentLocation()
+    }
+
     override fun addFavoriteLocation(location: Location) {
         locationDAO.addFavoriteLocation(location)
     }
@@ -57,4 +61,10 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
     override fun deleteFavoriteLocation(location: Location) {
         locationDAO.deleteFavoriteLocation(location)
     }
+
+    override fun addCurrentLocation(location: Location) {
+        locationDAO.deleteCurrentLocation()
+        locationDAO.addCurrentLocation(location)
+    }
+
 }

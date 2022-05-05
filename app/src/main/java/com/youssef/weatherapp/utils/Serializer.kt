@@ -56,5 +56,13 @@ class Serializer {
         fun deserializeWeatherCondition(str: String): WeatherCondition {
             return Gson().fromJson(str, WeatherCondition::class.java)
         }
+
+        fun serializeLocation(location: Location): String {
+            return Gson().toJson(location)
+        }
+
+        fun deserializeLocation(str: String): Location {
+            return Gson().fromJson(str, Location::class.java)
+        }
     }
 }
