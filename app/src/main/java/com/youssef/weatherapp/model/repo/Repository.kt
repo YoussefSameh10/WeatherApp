@@ -24,6 +24,14 @@ import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import com.youssef.weatherapp.utils.NetworkConnectivity
 import com.youssef.weatherapp.utils.Serializer
 import retrofit2.Response
+import java.util.*
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+
+import android.util.DisplayMetrics
+import androidx.core.content.ContextCompat
+
 
 class Repository private constructor(
     val context: Context,
@@ -54,32 +62,13 @@ class Repository private constructor(
         initSharedPreferences()
     }
 
-    private fun initSharedPreferences() {
-        val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        if (!sharedPreferences.contains(LANGUAGE)) {
-            with(sharedPreferences.edit()) {
-                putString(LANGUAGE, DEFAULT_LANGUAGE)
-                putString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
-                putString(SPEED_UNIT, DEFAULT_SPEED_UNIT)
-                apply()
-            }
-        }
-        language = LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
-        temperatureUnit = TemperatureUnitType.valueOf(sharedPreferences.getString(TEMPERATURE_UNIT,DEFAULT_TEMPERATURE_UNIT)!!)
-        speedUnit =SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
-    }
-
-    private fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
-        val response = remoteSource.getWeather(latitude, longitude, temperatureUnit.toString(), language.toString())
-        return if(response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-
-    private fun getWeatherLocal(latitude: Double, longitude: Double): LiveData<Weather> {
-        return localSource.getWeather(latitude, longitude)
+    override fun initLanguage() {
+        val config = context.resources.configuration
+        val locale = Locale(language.toString())
+        Locale.setDefault(locale)
+        config.setLocale(locale)
+        context.createConfigurationContext(config)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 
     override fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
@@ -168,6 +157,7 @@ class Repository private constructor(
             apply()
         }
         this.language = LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
+        initLanguage()
     }
 
     override fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
@@ -187,5 +177,34 @@ class Repository private constructor(
         }
         this.speedUnit = SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
     }
+
+    private fun initSharedPreferences() {
+        val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+        if (!sharedPreferences.contains(LANGUAGE)) {
+            with(sharedPreferences.edit()) {
+                putString(LANGUAGE, DEFAULT_LANGUAGE)
+                putString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
+                putString(SPEED_UNIT, DEFAULT_SPEED_UNIT)
+                apply()
+            }
+        }
+        language = LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
+        temperatureUnit = TemperatureUnitType.valueOf(sharedPreferences.getString(TEMPERATURE_UNIT,DEFAULT_TEMPERATURE_UNIT)!!)
+        speedUnit =SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
+    }
+
+    private fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
+        val response = remoteSource.getWeather(latitude, longitude, temperatureUnit.toString(), language.toString())
+        return if(response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
+
+    private fun getWeatherLocal(latitude: Double, longitude: Double): LiveData<Weather> {
+        return localSource.getWeather(latitude, longitude)
+    }
+
 
 }

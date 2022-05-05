@@ -27,4 +27,9 @@
         android:name="com.youssef.weatherapp.alerts.AlertsFragment"
         android:label="@string/menu_alerts"
         tools:layout="@layout/fragment_alerts" />
+    <fragment
+        android:id="@+id/fragment_map"
+        android:name="com.youssef.weatherapp.map.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>

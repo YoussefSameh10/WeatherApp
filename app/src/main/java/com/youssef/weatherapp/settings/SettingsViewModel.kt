@@ -30,10 +30,31 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
 
     var settingsModel: SettingsModel = SettingsModel(repo)
 
-    var currentLoc: MutableLiveData<Location> = MutableLiveData()
+    private var _currentLoc: MutableLiveData<Location> = MutableLiveData()
+    val currentLoc: LiveData<Location> get() = _currentLoc
+
     lateinit var cityName: String
 
-    private fun getCityName(latitude: Double, longitude: Double) {
+    init {
+        Log.i("TAG", "Init: ")
+        getCurrentLocation()
+    }
+
+    private fun getCurrentLocation() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val x = settingsModel.getCurrentLocation()
+            Log.i("TAG", "getCurrentLocation: " + x.value)
+            withContext(Dispatchers.Main) {
+                x.observe(owner) {
+                    if(it != null) {
+                        _currentLoc.postValue(it)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getCityName(latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             val cityNameLive = settingsModel.getCityName(latitude, longitude)
             withContext(Dispatchers.Main) {
@@ -49,7 +70,7 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
     private fun setCurrentLocation(location: Location) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.i("TAG", "setCurrentLocation: ")
-            currentLoc.postValue(location)
+            //_currentLoc.postValue(location)
             settingsModel.setCurrentLocation(location)
         }
     }
@@ -80,9 +101,13 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
 
     fun handleGPS(activity: FragmentActivity, context: Context) {
         if(!checkLocationPermitted(context)) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+            ActivityCompat.requestPermissions(
+                activity,
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
                 Constants.GPS_PERMISSION_CODE
             )
+            handleGPS(activity, context)
+            return
         }
         val locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {

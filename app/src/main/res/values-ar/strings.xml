@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">الطقس</string>
+    <string name="menu_home">الرئيسية</string>
+    <string name="menu_favorites">المفضلة</string>
+    <string name="menu_settings">الاعدادات</string>
+    <string name="menu_alerts">التنبيهات</string>
+    <string name="location_set_confirmation_message">"لقد تم تحديد مكانك في: "</string>
+    <string name="get_location_from">"تحديد مكاني عن طريق: "</string>
+    <string name="gps">مكاني الحالي</string>
+    <string name="map">الخريطة</string>
+    <string name="language">اللغة</string>
+    <string name="english">الانجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="temperature_units">وحدات الحرارة</string>
+    <string name="celsius">مئوية</string>
+    <string name="kelvin">كيلفين</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="action_settings">الاعدادات</string>
+    <string name="speed_units">وحدات السرعة</string>
+    <string name="meter_sec">متر/ثانية</string>
+    <string name="mile_hour">ميل/ساعة</string>
+    <string name="are_you_sure">هل انت متأكد؟</string>
+    <string name="ok">نعم</string>
+    <string name="cancel">الغاء</string>
+    <string name="loading">جاري التحميل</string>
+    <string name="current_location">الموقع الحالي</string>
+    <string name="choose_a_city">اختر مدينة</string>
+</resources>

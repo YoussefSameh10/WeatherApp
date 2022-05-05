@@ -1,28 +1,23 @@
 package com.youssef.weatherapp.settings
 
-import android.Manifest
-import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.app.ActivityCompat
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import androidx.navigation.findNavController
+import com.youssef.weatherapp.MainActivity
+import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentSettingsBinding
+import com.youssef.weatherapp.map.MapViewModel
+import com.youssef.weatherapp.map.MapViewModelFactory
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourceInterface
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
@@ -31,7 +26,6 @@ import com.youssef.weatherapp.model.pojo.types.LanguageType
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.Repository
-import com.youssef.weatherapp.utils.Constants.Companion.GPS_PERMISSION_CODE
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
@@ -39,7 +33,10 @@ import retrofit2.create
 class SettingsFragment : Fragment() {
 
     private lateinit var settingsViewModel: SettingsViewModel
+    private lateinit var mapViewModel: MapViewModel
     private var binding: FragmentSettingsBinding? = null
+
+    private lateinit var progressDialog: ProgressDialog
 
 
     override fun onCreateView(
@@ -59,22 +56,40 @@ class SettingsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i("TAG", "onDestroyView: ")
+        settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
+        Log.i("TAG", "onDestroyView: " + settingsViewModel.currentLoc.hasObservers())
         binding = null
     }
 
     private fun setupViewModel() {
         val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
-        val factory = SettingsViewModelFactory(
+        val settingsViewModelFactory = SettingsViewModelFactory(
             Repository.getInstance(
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
             ),
-        this
+            this
         )
         settingsViewModel =
-            ViewModelProvider(this, factory)[SettingsViewModel::class.java]
+            ViewModelProvider(activity!!, settingsViewModelFactory)[SettingsViewModel::class.java]
+
+        val mapViewModelFactory = MapViewModelFactory(
+            Repository.getInstance(
+                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
+            ),
+            this,
+            false
+        )
+        mapViewModel = ViewModelProvider(activity!!, mapViewModelFactory)[MapViewModel::class.java]
+
     }
 
     private fun setupView() {
+
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle(getString(R.string.loading))
+        progressDialog.setCancelable(false)
+
         when(settingsViewModel.getLanguagePreference()) {
             LanguageType.EN -> {
                 binding!!.radioButtonEnglish.isChecked = true
@@ -85,7 +100,7 @@ class SettingsFragment : Fragment() {
         }
 
         when(settingsViewModel.getTemperatureUnitPreference()) {
-             TemperatureUnitType.CELSIUS -> {
+            TemperatureUnitType.CELSIUS -> {
                 binding!!.radioButtonCelsius.isChecked = true
             }
             TemperatureUnitType.FAHRENHEIT -> {
@@ -97,7 +112,7 @@ class SettingsFragment : Fragment() {
         }
 
         when(settingsViewModel.getSpeedUnitPreference()) {
-             SpeedUnitType.MPS -> {
+            SpeedUnitType.MPS -> {
                 binding!!.radioButtonMPS.isChecked = true
             }
             else -> {
@@ -113,10 +128,10 @@ class SettingsFragment : Fragment() {
         handleLanguageChange()
         handleTemperatureUnitChange()
         handleSpeedUnitChange()
-
         handleLocationMethodChange()
-
     }
+
+
 
     private fun handleSpeedUnitChange() {
         binding!!.radioButtonMPS.setOnClickListener {
@@ -142,30 +157,64 @@ class SettingsFragment : Fragment() {
     private fun handleLanguageChange() {
         binding!!.radioButtonEnglish.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.EN)
+            activity!!.recreate()
         }
         binding!!.radioButtonArabic.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.AR)
+            activity!!.recreate()
         }
     }
 
     private fun handleLocationMethodChange() {
-        binding!!.radioButtonGPS.setOnClickListener {
+        binding!!.textViewGPS.setOnClickListener {
+            progressDialog.show()
             settingsViewModel.handleGPS(activity!!, requireContext())
         }
+
+        binding!!.textViewMap.setOnClickListener {
+            mapViewModel.navigateFromSettingsToMap(this)
+        }
+
         listenToLocationChange()
+        listenToMapLocationChange()
     }
 
     private fun listenToLocationChange() {
-        settingsViewModel.currentLoc.observe(this) {
-            Log.i("TAG", "listenToLocationChange: $it")
-            var message = ""
-            if(it.name == UNKNOWN_CITY) {
-                message = "Your location has been set to: " + it.latitude + ", " + it.longitude
+        Log.i("TAG", "listenToLocationChangeOUT: " + settingsViewModel.currentLoc.hasObservers())
+
+        settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
+        settingsViewModel.currentLoc.observe(viewLifecycleOwner) {
+            Log.i("TAG", "listenToLocationChange: " + it)
+            binding!!.textViewCityName.text = it.name
+            if (it.name == UNKNOWN_CITY) {
+                binding!!.textViewCoords.apply {
+                    visibility = View.VISIBLE
+                    text = "${it.latitude}, ${it.longitude}"
+                }
+            } else {
+                binding!!.textViewCoords.visibility = View.GONE
             }
-            else {
-                message = "Your location has been set to: " + it.name
-            }
-            UIHelper.showAlertDialog(requireContext(), title=it.name, message = message)
+            progressDialog.dismiss()
+            //informNewLocation(it)
         }
     }
+
+
+    private fun listenToMapLocationChange() {
+        Log.i("TAG", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
+        if(mapViewModel.finalLocation != null) {
+            progressDialog.show()
+            settingsViewModel.getCityName(mapViewModel.finalLocation!!.latitude, mapViewModel.finalLocation!!.longitude)
+        }
+    }
+
+    private fun informNewLocation(location: Location) {
+        val message = if (location.name == UNKNOWN_CITY) {
+            getString(R.string.location_set_confirmation_message) + location.latitude + ", " + location.longitude
+        } else {
+            getString(R.string.location_set_confirmation_message) + location.name
+        }
+        UIHelper.showAlertDialog(requireContext(), title = location.name, message = message)
+    }
+
 }

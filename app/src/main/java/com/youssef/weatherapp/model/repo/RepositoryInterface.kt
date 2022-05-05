@@ -15,6 +15,8 @@ import retrofit2.http.Query
 
 interface RepositoryInterface {
 
+    fun initLanguage()
+
     fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
 
     fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert>
