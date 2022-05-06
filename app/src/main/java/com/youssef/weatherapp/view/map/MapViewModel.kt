@@ -1,4 +1,4 @@
-package com.youssef.weatherapp.map
+package com.youssef.weatherapp.view.map
 
 import android.util.Log
 import androidx.fragment.app.Fragment

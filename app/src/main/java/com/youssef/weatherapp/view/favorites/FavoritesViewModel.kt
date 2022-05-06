@@ -1,4 +1,4 @@
-package com.youssef.weatherapp.favorites
+package com.youssef.weatherapp.view.favorites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -34,6 +34,12 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
         return weatherDAO.getWeather(latitude, longitude)
     }
 
+    override fun insertWeather(weather: Weather) {
+        weatherDAO.deleteWeather(weather.latitude, weather.longitude)
+        weatherDAO.insertWeather(weather)
+    }
+
+
     override fun getScheduledAlerts(): LiveData<List<ScheduledAlert>> {
         return scheduleAlertDAO.getScheduledAlerts()
     }

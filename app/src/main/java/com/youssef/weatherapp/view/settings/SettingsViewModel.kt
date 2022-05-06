@@ -1,4 +1,4 @@
-package com.youssef.weatherapp.settings
+package com.youssef.weatherapp.view.settings
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -43,9 +43,10 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
     private fun getCurrentLocation() {
         viewModelScope.launch(Dispatchers.IO) {
             val x = settingsModel.getCurrentLocation()
-            Log.i("TAG", "getCurrentLocation: " + x.value)
+
             withContext(Dispatchers.Main) {
                 x.observe(owner) {
+                    Log.i("TAG", "getCurrentLocation: " + it)
                     if(it != null) {
                         _currentLoc.postValue(it)
                     }

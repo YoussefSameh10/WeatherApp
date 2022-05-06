@@ -17,7 +17,8 @@ interface RepositoryInterface {
 
     fun initLanguage()
 
-    fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    fun insertWeather(weather: Weather)
 
     fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert>
     suspend fun getCityName(latitude: Double, longitude: Double): String

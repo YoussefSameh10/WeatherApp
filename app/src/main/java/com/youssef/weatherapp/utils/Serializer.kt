@@ -40,7 +40,7 @@ class Serializer {
             return Gson().fromJson(str, Temperature::class.java)
         }
 
-        fun serializeWeatherAlertList(weatherAlertList: List<WeatherAlert>): String {
+        fun serializeWeatherAlertList(weatherAlertList: List<WeatherAlert>?): String {
             return Gson().toJson(weatherAlertList)
         }
 

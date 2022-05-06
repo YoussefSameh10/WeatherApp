@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
 
 interface LocalDataSourceInterface {
     fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    fun insertWeather(weather: Weather)
 
     fun getScheduledAlerts(): LiveData<List<ScheduledAlert>>
     fun addScheduledAlert(scheduledAlert: ScheduledAlert)

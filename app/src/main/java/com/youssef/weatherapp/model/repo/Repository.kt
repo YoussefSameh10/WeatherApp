@@ -30,7 +30,10 @@ import androidx.core.content.ContextCompat.startActivity
 import android.content.Intent
 
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class Repository private constructor(
@@ -71,14 +74,26 @@ class Repository private constructor(
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 
-    override fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
+    override suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
+        Log.i("TAG", "getWeatherRepo: ")
         if(NetworkConnectivity.isNetworkAvailable(context)) {
-            val weatherLive: MutableLiveData<Weather> = MutableLiveData()
-            weatherLive.postValue(getWeatherRemote(latitude, longitude))
-            return weatherLive
+            val result = MutableLiveData<Weather>()
+            Log.i("TAG", "getWeatherRepo: ")
+            val weather = getWeatherRemote(latitude, longitude)
+            withContext(Dispatchers.Main) {
+                result.postValue(weather!!)
+                Log.i("TAG", "getWeatherRepo: " + weather)
+            }
+            return result
         }
         return getWeatherLocal(latitude, longitude)
     }
+
+    override fun insertWeather(weather: Weather) {
+        localSource.insertWeather(weather)
+    }
+
+
 
     override fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert> {
         val response = remoteSource.getTodaysAlerts(latitude, longitude, temperatureUnit.toString(), language.toString())
@@ -193,8 +208,10 @@ class Repository private constructor(
         speedUnit =SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
     }
 
-    private fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
+    private suspend fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
+        Log.i("TAG", "getWeatherRemote: $")
         val response = remoteSource.getWeather(latitude, longitude, temperatureUnit.toString(), language.toString())
+        Log.i("TAG", "getWeatherRemote: $response")
         return if(response.isSuccessful) {
             response.body()
         } else {

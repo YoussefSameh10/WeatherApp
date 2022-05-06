@@ -1,4 +1,4 @@
-package com.youssef.weatherapp.settings
+package com.youssef.weatherapp.view.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,5 +1,6 @@
 package com.youssef.weatherapp.utils
 
+import androidx.annotation.Nullable
 import androidx.room.TypeConverter
 import com.youssef.weatherapp.model.pojo.*
 
@@ -45,7 +46,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromWeatherAlertList(weatherAlertList: List<WeatherAlert>): String {
+    fun fromWeatherAlertList(weatherAlertList: List<WeatherAlert>?): String {
         return Serializer.serializeWeatherAlertList(weatherAlertList)
     }
 

@@ -1,4 +1,4 @@
-package com.youssef.weatherapp.alerts
+package com.youssef.weatherapp.view.alerts
 
 import androidx.lifecycle.ViewModel
 

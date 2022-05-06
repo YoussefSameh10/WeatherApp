@@ -11,7 +11,7 @@ import retrofit2.http.Query
 interface RemoteDataSourceInterface {
 
     @GET("onecall?exclude=minutely,alerts")
-    fun getWeather(
+    suspend fun getWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("units") unit: String,

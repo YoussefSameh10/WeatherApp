@@ -1,23 +1,18 @@
-package com.youssef.weatherapp.settings
+package com.youssef.weatherapp.view.settings
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentSettingsBinding
-import com.youssef.weatherapp.map.MapViewModel
-import com.youssef.weatherapp.map.MapViewModelFactory
+import com.youssef.weatherapp.view.map.MapViewModel
+import com.youssef.weatherapp.view.map.MapViewModelFactory
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourceInterface
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
@@ -71,7 +66,7 @@ class SettingsFragment : Fragment() {
             this
         )
         settingsViewModel =
-            ViewModelProvider(activity!!, settingsViewModelFactory)[SettingsViewModel::class.java]
+            ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
 
         val mapViewModelFactory = MapViewModelFactory(
             Repository.getInstance(
@@ -89,6 +84,8 @@ class SettingsFragment : Fragment() {
         progressDialog = ProgressDialog(requireContext())
         progressDialog.setTitle(getString(R.string.loading))
         progressDialog.setCancelable(false)
+
+        (requireActivity() as MainActivity).supportActionBar?.show()
 
         when(settingsViewModel.getLanguagePreference()) {
             LanguageType.EN -> {
