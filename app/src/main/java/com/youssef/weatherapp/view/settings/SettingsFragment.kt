@@ -1,6 +1,7 @@
 package com.youssef.weatherapp.view.settings
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentSettingsBinding
@@ -154,12 +157,22 @@ class SettingsFragment : Fragment() {
     private fun handleLanguageChange() {
         binding!!.radioButtonEnglish.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.EN)
-            activity!!.recreate()
+            refresh()
+
         }
         binding!!.radioButtonArabic.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.AR)
-            activity!!.recreate()
+            refresh()
+
         }
+    }
+
+    private fun refresh() {
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.putExtra("settings", true)
+        startActivity(intent)
+        activity!!.finish()
+        activity!!.overridePendingTransition(0, 0)
     }
 
     private fun handleLocationMethodChange() {

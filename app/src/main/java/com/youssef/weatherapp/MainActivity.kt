@@ -28,8 +28,13 @@ class MainActivity : AppCompatActivity() {
         setLanguageAsPreferred()
 
 
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if(intent.getBooleanExtra("settings", false)) {
+            findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.nav_settings)
+        }
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
