@@ -25,6 +25,7 @@ import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.Repository
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
+import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
 
@@ -36,6 +37,8 @@ class SettingsFragment : Fragment() {
 
     private lateinit var progressDialog: ProgressDialog
 
+    private lateinit var formatter: Formatter
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,8 +47,7 @@ class SettingsFragment : Fragment() {
     ): View? {
 
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        Log.i("TAG", "onCreateView: ")
-
+        setupFormatter()
         setupViewModel()
         setupView()
 
@@ -58,6 +60,15 @@ class SettingsFragment : Fragment() {
         settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
         Log.i("TAG", "onDestroyView: " + settingsViewModel.currentLoc.hasObservers())
         binding = null
+    }
+
+    private fun setupFormatter() {
+        val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
+        formatter = Formatter(
+            Repository.getInstance(
+                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
+            )
+        )
     }
 
     private fun setupViewModel() {
@@ -158,12 +169,10 @@ class SettingsFragment : Fragment() {
         binding!!.radioButtonEnglish.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.EN)
             refresh()
-
         }
         binding!!.radioButtonArabic.setOnClickListener {
             settingsViewModel.setLanguage(LanguageType.AR)
             refresh()
-
         }
     }
 
@@ -195,7 +204,7 @@ class SettingsFragment : Fragment() {
         settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
         settingsViewModel.currentLoc.observe(viewLifecycleOwner) {
             Log.i("TAG", "listenToLocationChange: " + it)
-            binding!!.textViewCityName.text = it.name
+            binding!!.textViewCityName.text = formatter.formatCityName(it.name)
             if (it.name == UNKNOWN_CITY) {
                 binding!!.textViewCoords.apply {
                     visibility = View.VISIBLE

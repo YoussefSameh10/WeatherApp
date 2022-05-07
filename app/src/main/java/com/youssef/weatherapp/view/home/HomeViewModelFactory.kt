@@ -16,14 +16,3 @@ class HomeViewModelFactory(private val _irepo: RepositoryInterface, private val 
         }
     }
 }
-
-class SettingsViewModelFactory(private val _irepo: RepositoryInterface, private val _owner: LifecycleOwner): ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
-            SettingsViewModel(_irepo, _owner) as T
-        }
-        else {
-            throw IllegalArgumentException("No ViewModel called HomeViewModel accepts these arguments")
-        }
-    }
-}

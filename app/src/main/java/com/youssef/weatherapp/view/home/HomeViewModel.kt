@@ -1,5 +1,6 @@
 package com.youssef.weatherapp.view.home
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.*
 import com.youssef.weatherapp.model.pojo.Location
@@ -19,6 +20,7 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
     private var _currentLoc: MutableLiveData<Location> = MutableLiveData()
 
 
+    @SuppressLint("NullSafeMutableLiveData")
     fun getWeather() {
         Log.i("TAG", "getWeather: ")
         getCurrentLocation()
@@ -37,6 +39,9 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
                         }
                     }
                 }
+            }
+            else {
+                _weather.postValue(null)
             }
         }
     }

@@ -14,8 +14,8 @@ interface RemoteDataSourceInterface {
     suspend fun getWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("units") unit: String,
         @Query("lang") language: String,
+        @Query("units") unit: String,
         @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
     ): Response<Weather>
 
@@ -23,8 +23,8 @@ interface RemoteDataSourceInterface {
     fun getTodaysAlerts(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("units") unit: String,
         @Query("lang") language: String,
+        @Query("units") unit: String,
         @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
     ): Response<List<WeatherAlert>>
 
@@ -32,8 +32,8 @@ interface RemoteDataSourceInterface {
     suspend fun getCityName(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("units") unit: String,
         @Query("lang") language: String,
+        @Query("units") unit: String,
         @Query("appid") apiKey: String = BuildConfig.WEATHER_API_KEY
     ): Response<Weather>
 }
