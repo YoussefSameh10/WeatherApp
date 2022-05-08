@@ -25,7 +25,7 @@ data class CurrentWeather(
     var clouds: Int = 0
 
     @SerializedName("weather")
-    var weatherCondition: WeatherCondition = WeatherCondition("")
+    var weatherCondition: List<WeatherCondition> = emptyList()
 
     constructor(datetime: Long,
                 temperature: Double,
@@ -33,7 +33,7 @@ data class CurrentWeather(
                 humidity: Int,
                 windSpeed: Double,
                 clouds: Int,
-                weatherCondition: WeatherCondition
+                weatherCondition: List<WeatherCondition>
     ): this(datetime) {
         this.temperature = temperature
         this.pressure = pressure
@@ -42,4 +42,5 @@ data class CurrentWeather(
         this.clouds = clouds
         this.weatherCondition = weatherCondition
     }
+
 }

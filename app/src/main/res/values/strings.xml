@@ -33,4 +33,6 @@
     <string name="loading">Loading</string>
     <string name="current_location">Current Location:</string>
     <string name="choose_a_city">Choose a city</string>
+    <string name="no_location_dialog_title">Can\'t detect your location!</string>
+    <string name="no_location_dialog_message">Please choose your location</string>
 </resources>

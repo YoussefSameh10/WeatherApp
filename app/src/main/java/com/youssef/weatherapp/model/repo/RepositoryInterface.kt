@@ -17,7 +17,8 @@ interface RepositoryInterface {
 
     fun initLanguage()
 
-    fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    fun insertWeather(weather: Weather)
 
     fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert>
     suspend fun getCityName(latitude: Double, longitude: Double): String
@@ -35,8 +36,10 @@ interface RepositoryInterface {
     fun getLanguage(): LanguageType
     fun getTemperatureUnit(): TemperatureUnitType
     fun getSpeedUnit(): SpeedUnitType
+    fun isCurrentLocationSet(): Boolean
 
     fun setLanguage(language:LanguageType)
     fun setTemperatureUnit(temperatureUnit: TemperatureUnitType)
     fun setSpeedUnit(speedUnit: SpeedUnitType)
+    fun setIsCurrentLocationSet(isCurrentLocationSet: Boolean)
 }

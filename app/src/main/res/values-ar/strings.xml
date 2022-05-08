@@ -26,4 +26,6 @@
     <string name="loading">جاري التحميل</string>
     <string name="current_location">الموقع الحالي</string>
     <string name="choose_a_city">اختر مدينة</string>
+    <string name="no_location_dialog_title">لايمكننا تحديد موقعك!</string>
+    <string name="no_location_dialog_message">برجاء اختيار موقعك</string>
 </resources>

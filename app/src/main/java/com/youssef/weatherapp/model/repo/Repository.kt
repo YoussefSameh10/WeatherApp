@@ -30,7 +30,12 @@ import androidx.core.content.ContextCompat.startActivity
 import android.content.Intent
 
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.core.content.ContextCompat
+import com.youssef.weatherapp.utils.Constants.Companion.DEFAULT_CURRENT_LOCATION_IS_SET
+import com.youssef.weatherapp.utils.Constants.Companion.IS_CURRENT_LOCATION_SET
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class Repository private constructor(
@@ -57,6 +62,7 @@ class Repository private constructor(
     private lateinit var language: LanguageType
     private lateinit var temperatureUnit: TemperatureUnitType
     private lateinit var speedUnit: SpeedUnitType
+    private var isCurrentLocationSet: Boolean = false
 
     init {
         initSharedPreferences()
@@ -64,24 +70,36 @@ class Repository private constructor(
 
     override fun initLanguage() {
         val config = context.resources.configuration
-        val locale = Locale(language.toString())
+        val locale = Locale(language.string)
         Locale.setDefault(locale)
         config.setLocale(locale)
         context.createConfigurationContext(config)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 
-    override fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
+    override suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
+        Log.i("TAG", "getWeatherRepo: ")
         if(NetworkConnectivity.isNetworkAvailable(context)) {
-            val weatherLive: MutableLiveData<Weather> = MutableLiveData()
-            weatherLive.postValue(getWeatherRemote(latitude, longitude))
-            return weatherLive
+            val result = MutableLiveData<Weather>()
+            Log.i("TAG", "getWeatherRepo: ")
+            val weather = getWeatherRemote(latitude, longitude)
+            withContext(Dispatchers.Main) {
+                result.postValue(weather!!)
+                Log.i("TAG", "getWeatherRepo: " + weather)
+            }
+            return result
         }
         return getWeatherLocal(latitude, longitude)
     }
 
+    override fun insertWeather(weather: Weather) {
+        localSource.insertWeather(weather)
+    }
+
+
+
     override fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert> {
-        val response = remoteSource.getTodaysAlerts(latitude, longitude, temperatureUnit.toString(), language.toString())
+        val response = remoteSource.getTodaysAlerts(latitude, longitude, language.string, temperatureUnit.string)
         return if(response.isSuccessful) {
             response.body() ?: emptyList()
         } else {
@@ -90,14 +108,10 @@ class Repository private constructor(
     }
 
     override suspend fun getCityName(latitude: Double, longitude: Double): String {
-        val response = remoteSource.getCityName(latitude, longitude, temperatureUnit.toString(), language.toString())
+        val response = remoteSource.getCityName(latitude, longitude, language.string, temperatureUnit.string)
         return if(response.isSuccessful) {
             val timezone: String = (response.body() as Weather).timezone
-            var cityName  = timezone.substringAfter('/', UNKNOWN_CITY)
-            if(cityName.contains(GMT)) {
-                cityName = UNKNOWN_CITY
-            }
-            cityName
+            timezone
         } else {
             UNKNOWN_CITY
         }
@@ -137,45 +151,60 @@ class Repository private constructor(
 
     override fun getLanguage(): LanguageType {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        return LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
+        return LanguageType.getByValue(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)!!
     }
 
     override fun getTemperatureUnit(): TemperatureUnitType {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        return TemperatureUnitType.valueOf(sharedPreferences.getString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)!!)
+        return TemperatureUnitType.getByValue(sharedPreferences.getString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)!!)!!
     }
 
     override fun getSpeedUnit(): SpeedUnitType {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
-        return SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
+        return SpeedUnitType.getByValue(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)!!
+    }
+
+    override fun isCurrentLocationSet(): Boolean {
+        val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(IS_CURRENT_LOCATION_SET, DEFAULT_CURRENT_LOCATION_IS_SET)
     }
 
     override fun setLanguage(language: LanguageType) {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString(LANGUAGE, language.toString())
+            putString(LANGUAGE, language.string)
             apply()
         }
-        this.language = LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
+        this.language = LanguageType.getByValue(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)!!
         initLanguage()
     }
 
     override fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString(TEMPERATURE_UNIT, temperatureUnit.toString())
+            putString(TEMPERATURE_UNIT, temperatureUnit.string)
             apply()
         }
-        this.temperatureUnit = TemperatureUnitType.valueOf(sharedPreferences.getString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)!!)
+        this.temperatureUnit = TemperatureUnitType.getByValue(sharedPreferences.getString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)!!)!!
     }
 
     override fun setSpeedUnit(speedUnit: SpeedUnitType) {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString(SPEED_UNIT, speedUnit.toString())
+            putString(SPEED_UNIT, speedUnit.string)
             apply()
         }
-        this.speedUnit = SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
+        this.speedUnit = SpeedUnitType.getByValue(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)!!
+    }
+
+    override fun setIsCurrentLocationSet(isCurrentLocationSet: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean(IS_CURRENT_LOCATION_SET, isCurrentLocationSet)
+            apply()
+        }
+        Log.i("TAG", "setIsCurrentLocationSet: ")
+        this.isCurrentLocationSet = sharedPreferences.getBoolean(IS_CURRENT_LOCATION_SET, DEFAULT_CURRENT_LOCATION_IS_SET)
     }
 
     private fun initSharedPreferences() {
@@ -185,16 +214,21 @@ class Repository private constructor(
                 putString(LANGUAGE, DEFAULT_LANGUAGE)
                 putString(TEMPERATURE_UNIT, DEFAULT_TEMPERATURE_UNIT)
                 putString(SPEED_UNIT, DEFAULT_SPEED_UNIT)
+                putBoolean(IS_CURRENT_LOCATION_SET, DEFAULT_CURRENT_LOCATION_IS_SET)
                 apply()
             }
         }
-        language = LanguageType.valueOf(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)
-        temperatureUnit = TemperatureUnitType.valueOf(sharedPreferences.getString(TEMPERATURE_UNIT,DEFAULT_TEMPERATURE_UNIT)!!)
-        speedUnit =SpeedUnitType.valueOf(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)
+        language = LanguageType.getByValue(sharedPreferences.getString(LANGUAGE, DEFAULT_LANGUAGE)!!)!!
+        temperatureUnit = TemperatureUnitType.getByValue(sharedPreferences.getString(TEMPERATURE_UNIT,DEFAULT_TEMPERATURE_UNIT)!!)!!
+        speedUnit = SpeedUnitType.getByValue(sharedPreferences.getString(SPEED_UNIT, DEFAULT_SPEED_UNIT)!!)!!
+        isCurrentLocationSet = sharedPreferences.getBoolean(IS_CURRENT_LOCATION_SET, DEFAULT_CURRENT_LOCATION_IS_SET)
     }
 
-    private fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
-        val response = remoteSource.getWeather(latitude, longitude, temperatureUnit.toString(), language.toString())
+    private suspend fun getWeatherRemote(latitude: Double, longitude: Double): Weather? {
+        val t: String = temperatureUnit.string
+        Log.i("TAG", "getWeatherRemote: $t")
+        val response = remoteSource.getWeather(latitude, longitude, language.string, temperatureUnit.string)
+        Log.i("TAG", "getWeatherRemoteeeeeeeee: ${response.body()!!.currentWeather.temperature}")
         return if(response.isSuccessful) {
             response.body()
         } else {
