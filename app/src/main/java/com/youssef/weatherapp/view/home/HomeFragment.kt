@@ -72,6 +72,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        progressDialog.dismiss()
         _binding = null
     }
 
@@ -119,8 +120,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun listenForWeatherChange() {
-        progressDialog = ProgressDialog(requireContext())
-        progressDialog.show()
+        prepareViewsForLoadingState()
         homeViewModel.getWeather()
         homeViewModel.weather.observe(viewLifecycleOwner) {
             Log.i("TAG", "listenForWeatherChange: $it  /  ${homeViewModel.isLocationSet()}")
@@ -140,6 +140,14 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun prepareViewsForLoadingState() {
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle(getString(R.string.loading))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        binding.cardViewCurrentWeather.visibility = View.GONE
+    }
+
     @SuppressLint("NewApi")
     private fun setupView(weather: Weather) {
 
@@ -151,7 +159,7 @@ class HomeFragment : Fragment() {
         binding.textViewTime.text = formatter.formatTime(weather.currentWeather.datetime, weather.timezoneOffset)
         binding.textViewTemperature.text = formatter.formatTemperature(weather.currentWeather.temperature)
         binding.textViewDescription.text = weather.currentWeather.weatherCondition[0].description
-
+        binding.cardViewCurrentWeather.visibility = View.VISIBLE
 
         var request: RequestBuilder<Drawable>
         CoroutineScope(Dispatchers.IO).launch {

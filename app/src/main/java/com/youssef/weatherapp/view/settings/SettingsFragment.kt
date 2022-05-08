@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentSettingsBinding
@@ -38,6 +36,8 @@ class SettingsFragment : Fragment() {
     private lateinit var progressDialog: ProgressDialog
 
     private lateinit var formatter: Formatter
+
+    private var hasJustOpened = true
 
 
     override fun onCreateView(
@@ -186,7 +186,7 @@ class SettingsFragment : Fragment() {
 
     private fun handleLocationMethodChange() {
         binding!!.textViewGPS.setOnClickListener {
-            progressDialog.show()
+            //progressDialog.show()
             settingsViewModel.handleGPS(activity!!, requireContext())
         }
 
@@ -203,19 +203,24 @@ class SettingsFragment : Fragment() {
 
         settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
         settingsViewModel.currentLoc.observe(viewLifecycleOwner) {
-            settingsViewModel.setIsLocationSet()
-            Log.i("TAG", "listenToLocationChange: " + it)
-            binding!!.textViewCityName.text = formatter.formatCityName(it.name)
-            if (it.name == UNKNOWN_CITY) {
-                binding!!.textViewCoords.apply {
-                    visibility = View.VISIBLE
-                    text = "${it.latitude}, ${it.longitude}"
+            it.getContentIfNotHandled()?.let {
+                settingsViewModel.setIsLocationSet()
+                Log.i("TAG", "listenToLocationChange: " + it)
+                binding!!.textViewCityName.text = formatter.formatCityName(it.name)
+                if (it.name == UNKNOWN_CITY) {
+                    binding!!.textViewCoords.apply {
+                        visibility = View.VISIBLE
+                        text = "${it.latitude}, ${it.longitude}"
+                    }
+                } else {
+                    binding!!.textViewCoords.visibility = View.GONE
                 }
-            } else {
-                binding!!.textViewCoords.visibility = View.GONE
+                progressDialog.dismiss()
+                if(!hasJustOpened) {
+                    informNewLocation(it)
+                }
+                hasJustOpened = false
             }
-            progressDialog.dismiss()
-            //informNewLocation(it)
         }
     }
 
@@ -224,6 +229,7 @@ class SettingsFragment : Fragment() {
         Log.i("TAGs", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
         mapViewModel.finalLocation.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let {
+                Log.i("TAG", "listenToMapLocationChange: ")
                 progressDialog.show()
                 settingsViewModel.getCityName(it.latitude, it.longitude)
             }
@@ -231,6 +237,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun informNewLocation(location: Location) {
+        location.name = formatter.formatCityName(location.name)
         val message = if (location.name == UNKNOWN_CITY) {
             getString(R.string.location_set_confirmation_message) + location.latitude + ", " + location.longitude
         } else {

@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.utils.Constants.Companion.GMT
 import com.youssef.weatherapp.utils.Constants.Companion.SPEED_CONVERTER
+import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -31,6 +33,9 @@ class Formatter(val repo: RepositoryInterface) {
 
     fun formatCityName(fullName: String): String {
         var cityName = fullName.substringAfter("/")
+        if(cityName.contains(GMT)) {
+            return UNKNOWN_CITY
+        }
         cityName = cityName.replace("_", " ")
         return cityName
     }

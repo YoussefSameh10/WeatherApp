@@ -22,6 +22,7 @@ import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.utils.Constants
+import com.youssef.weatherapp.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,8 +31,8 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
 
     var settingsModel: SettingsModel = SettingsModel(repo)
 
-    private var _currentLoc: MutableLiveData<Location> = MutableLiveData()
-    val currentLoc: LiveData<Location> get() = _currentLoc
+    private var _currentLoc: MutableLiveData<Event<Location>> = MutableLiveData()
+    val currentLoc: LiveData<Event<Location>> get() = _currentLoc
 
     lateinit var cityName: String
 
@@ -48,7 +49,7 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
                 x.observe(owner) {
                     Log.i("TAG", "getCurrentLocation: " + it)
                     if(it != null) {
-                        _currentLoc.postValue(it)
+                        _currentLoc.postValue(Event(it))
                     }
                 }
             }
