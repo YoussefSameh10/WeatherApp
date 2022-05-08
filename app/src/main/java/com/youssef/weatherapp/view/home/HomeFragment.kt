@@ -123,7 +123,8 @@ class HomeFragment : Fragment() {
         progressDialog.show()
         homeViewModel.getWeather()
         homeViewModel.weather.observe(viewLifecycleOwner) {
-            if(it == null) {
+            Log.i("TAG", "listenForWeatherChange: $it  /  ${homeViewModel.isLocationSet()}")
+            if(!homeViewModel.isLocationSet()) {
                 UIHelper.showAlertDialog(
                     requireContext(),
                     getString(R.string.no_location_dialog_title), getString(
@@ -132,7 +133,7 @@ class HomeFragment : Fragment() {
                 )
                 findNavController().navigate(R.id.nav_settings)
             }
-            else {
+            else if(it != null) {
                 setupView(it)
             }
             progressDialog.dismiss()

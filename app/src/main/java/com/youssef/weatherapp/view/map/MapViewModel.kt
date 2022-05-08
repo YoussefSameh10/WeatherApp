@@ -11,13 +11,16 @@ import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
+import com.youssef.weatherapp.utils.Event
 
 class MapViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner, val isFavoriteState: Boolean): ViewModel() {
 
     private var _location: MutableLiveData<Location> = MutableLiveData()
     val location: LiveData<Location> get() = _location
 
-    var finalLocation: Location? = null
+    private var _finalLocation: MutableLiveData<Event<Location>> = MutableLiveData()
+    val finalLocation: LiveData<Event<Location>> get() = _finalLocation
+
 
     fun navigateFromSettingsToMap(fragment: Fragment) {
         fragment.findNavController().navigate(R.id.fragment_map)
@@ -29,7 +32,7 @@ class MapViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner, val
 
     fun locationConfirmed(location: Location) {
         Log.i("TAG", "locationConfirmed: ")
-        finalLocation = location
+        _finalLocation.postValue(Event(location))
     }
 
 }

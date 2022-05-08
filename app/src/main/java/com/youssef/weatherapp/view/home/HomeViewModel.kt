@@ -64,6 +64,10 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
         }
     }
 
+    fun isLocationSet(): Boolean {
+        return homeModel.isLocationSet()
+    }
+
 
 
 }

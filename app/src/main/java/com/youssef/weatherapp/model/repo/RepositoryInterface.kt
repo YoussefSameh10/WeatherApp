@@ -36,8 +36,10 @@ interface RepositoryInterface {
     fun getLanguage(): LanguageType
     fun getTemperatureUnit(): TemperatureUnitType
     fun getSpeedUnit(): SpeedUnitType
+    fun isCurrentLocationSet(): Boolean
 
     fun setLanguage(language:LanguageType)
     fun setTemperatureUnit(temperatureUnit: TemperatureUnitType)
     fun setSpeedUnit(speedUnit: SpeedUnitType)
+    fun setIsCurrentLocationSet(isCurrentLocationSet: Boolean)
 }

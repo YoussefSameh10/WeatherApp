@@ -16,10 +16,12 @@ class Constants {
         const val LANGUAGE = "language"
         const val TEMPERATURE_UNIT = "temperature_unit"
         const val SPEED_UNIT = "speed_unit"
+        const val IS_CURRENT_LOCATION_SET = "is_current_location_set"
 
         val DEFAULT_LANGUAGE = LanguageType.EN.string
         val DEFAULT_TEMPERATURE_UNIT = TemperatureUnitType.CELSIUS.string
         val DEFAULT_SPEED_UNIT = SpeedUnitType.MPS.string
+        const val DEFAULT_CURRENT_LOCATION_IS_SET = false
 
 
         const val GPS_PERMISSION_CODE = 1

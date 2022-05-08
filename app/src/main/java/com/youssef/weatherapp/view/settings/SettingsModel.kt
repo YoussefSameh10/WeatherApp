@@ -47,4 +47,8 @@ class SettingsModel(var repo: RepositoryInterface) {
     fun setSpeedUnit(speedUnit: SpeedUnitType) {
         repo.setSpeedUnit(speedUnit)
     }
+
+    fun setIsLocationSet() {
+        repo.setIsCurrentLocationSet(true)
+    }
 }

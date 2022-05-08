@@ -203,6 +203,7 @@ class SettingsFragment : Fragment() {
 
         settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
         settingsViewModel.currentLoc.observe(viewLifecycleOwner) {
+            settingsViewModel.setIsLocationSet()
             Log.i("TAG", "listenToLocationChange: " + it)
             binding!!.textViewCityName.text = formatter.formatCityName(it.name)
             if (it.name == UNKNOWN_CITY) {
@@ -220,10 +221,12 @@ class SettingsFragment : Fragment() {
 
 
     private fun listenToMapLocationChange() {
-        Log.i("TAG", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
-        if(mapViewModel.finalLocation != null) {
-            progressDialog.show()
-            settingsViewModel.getCityName(mapViewModel.finalLocation!!.latitude, mapViewModel.finalLocation!!.longitude)
+        Log.i("TAGs", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
+        mapViewModel.finalLocation.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let {
+                progressDialog.show()
+                settingsViewModel.getCityName(it.latitude, it.longitude)
+            }
         }
     }
 

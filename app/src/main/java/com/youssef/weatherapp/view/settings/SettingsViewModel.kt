@@ -70,7 +70,7 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
 
     private fun setCurrentLocation(location: Location) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.i("TAG", "setCurrentLocation: ")
+            Log.i("TAGs", "setCurrentLocation: ")
             //_currentLoc.postValue(location)
             settingsModel.setCurrentLocation(location)
         }
@@ -98,6 +98,10 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
 
     fun setSpeedUnit(speedUnit: SpeedUnitType) {
         settingsModel.setSpeedUnit(speedUnit)
+    }
+
+    fun setIsLocationSet() {
+        settingsModel.setIsLocationSet()
     }
 
     fun handleGPS(activity: FragmentActivity, context: Context) {

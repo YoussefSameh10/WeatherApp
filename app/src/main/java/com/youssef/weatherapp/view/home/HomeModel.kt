@@ -17,4 +17,8 @@ class HomeModel(val repo: RepositoryInterface) {
     fun saveCurrentWeather(weather: Weather) {
         repo.insertWeather(weather)
     }
+
+    fun isLocationSet(): Boolean {
+        return repo.isCurrentLocationSet()
+    }
 }
