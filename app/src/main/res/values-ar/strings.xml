@@ -28,4 +28,8 @@
     <string name="choose_a_city">اختر مدينة</string>
     <string name="no_location_dialog_title">لايمكننا تحديد موقعك!</string>
     <string name="no_location_dialog_message">برجاء اختيار موقعك</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="clouds">السحب</string>
+    <string name="pressure">ضغط الهواء</string>
 </resources>

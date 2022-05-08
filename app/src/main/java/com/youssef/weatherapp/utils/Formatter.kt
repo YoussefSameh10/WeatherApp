@@ -1,7 +1,9 @@
 package com.youssef.weatherapp.utils
 
+import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.RepositoryInterface
@@ -43,9 +45,9 @@ class Formatter(val repo: RepositoryInterface) {
     fun formatTemperature(temperature: Double): String {
         val temperatureInt = temperature.toInt()
         return when(repo.getTemperatureUnit()) {
-            TemperatureUnitType.CELSIUS -> "${temperatureInt}°C"
-            TemperatureUnitType.KELVIN -> "${temperatureInt}K"
-            TemperatureUnitType.FAHRENHEIT -> "$temperatureInt°F"
+            TemperatureUnitType.CELSIUS -> "$temperatureInt °C"
+            TemperatureUnitType.KELVIN -> "$temperatureInt K"
+            TemperatureUnitType.FAHRENHEIT -> "$temperatureInt °F"
         }
     }
 
@@ -79,7 +81,7 @@ class Formatter(val repo: RepositoryInterface) {
     }
 
     fun formatPressure(pressure: Int): String {
-        return "$pressure mBar"
+        return "$pressure milliBar"
     }
 
     fun formatHumidity(humidity: Int): String {

@@ -35,4 +35,8 @@
     <string name="choose_a_city">Choose a city</string>
     <string name="no_location_dialog_title">Can\'t detect your location!</string>
     <string name="no_location_dialog_message">Please choose your location</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="humidity">Humidity</string>
+    <string name="clouds">Clouds</string>
+    <string name="pressure">Pressure</string>
 </resources>
