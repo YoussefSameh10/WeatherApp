@@ -13,7 +13,7 @@ import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import com.youssef.weatherapp.utils.Event
 
-class MapViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner, val isFavoriteState: Boolean): ViewModel() {
+class MapViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner): ViewModel() {
 
     private var _location: MutableLiveData<Location> = MutableLiveData()
     val location: LiveData<Location> get() = _location

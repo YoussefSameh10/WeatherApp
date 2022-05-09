@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
 import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,28 +22,35 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
 
 
     @SuppressLint("NullSafeMutableLiveData")
-    fun getWeather() {
+    fun getWeather(favoriteLocation: Location?) {
         Log.i("TAG", "getWeather: ")
-        getCurrentLocation()
+        if(favoriteLocation == null) {
+            getCurrentLocation()
+        }
+        else {
+            Log.i("TAG", "getWeatherrrrrrrrrrrrrrrr: $favoriteLocation")
+            _currentLoc.postValue(favoriteLocation)
+        }
 
         _currentLoc.observe(owner) { location ->
-            Log.i("TAG", "getWeatherObserve: $location")
-            if(location != null) {
+
+            Log.i("TAGGGG", "getWeatherObserve: $location")
+            if (location != null) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val weather = homeModel.getWeather(location.latitude, location.longitude)
                     withContext(Dispatchers.Main) {
                         weather.observe(owner) {
-                            if(it != null) {
+                            if (it != null) {
                                 _weather.postValue(it)
                                 saveWeather(it)
                             }
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 _weather.postValue(null)
             }
+
         }
     }
 
@@ -64,10 +72,18 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
         }
     }
 
+    private fun getFavoriteLocation() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val location = homeModel.getCurrentLocation()
+            withContext(Dispatchers.Main) {
+                location.observe(owner) {
+                    _currentLoc.postValue(it)
+                }
+            }
+        }
+    }
+
     fun isLocationSet(): Boolean {
         return homeModel.isLocationSet()
     }
-
-
-
 }

@@ -86,8 +86,7 @@ class SettingsFragment : Fragment() {
             Repository.getInstance(
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
             ),
-            this,
-            false
+            this
         )
         mapViewModel = ViewModelProvider(activity!!, mapViewModelFactory)[MapViewModel::class.java]
 
@@ -186,7 +185,7 @@ class SettingsFragment : Fragment() {
 
     private fun handleLocationMethodChange() {
         binding!!.textViewGPS.setOnClickListener {
-            //progressDialog.show()
+            progressDialog.show()
             settingsViewModel.handleGPS(activity!!, requireContext())
         }
 

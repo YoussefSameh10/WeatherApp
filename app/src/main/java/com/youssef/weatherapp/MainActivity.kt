@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setPreferences() {
         setLanguageAsPreferred()
-        setTemperatureUnitAsPreferred()
+        //setTemperatureUnitAsPreferred()
     }
 
     private fun setLanguageAsPreferred() {

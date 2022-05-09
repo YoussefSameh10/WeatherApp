@@ -15,14 +15,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentHomeBinding
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourceInterface
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
+import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
 import com.youssef.weatherapp.model.repo.Repository
 import com.youssef.weatherapp.utils.Constants
+import com.youssef.weatherapp.utils.Constants.Companion.FAVORITE_LOCATION
+import com.youssef.weatherapp.utils.Constants.Companion.IS_CURRENT_LOCATION
 import com.youssef.weatherapp.utils.Constants.Companion.iconURL
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.utils.UIHelper
@@ -94,7 +98,7 @@ class HomeFragment : Fragment() {
             this
         )
         homeViewModel =
-            ViewModelProvider(activity!!, homeViewModelFactory)[HomeViewModel::class.java]
+            ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
 
     }
 
@@ -121,17 +125,18 @@ class HomeFragment : Fragment() {
 
     private fun listenForWeatherChange() {
         prepareViewsForLoadingState()
-        homeViewModel.getWeather()
+
+        val location: Location? = arguments?.getSerializable(FAVORITE_LOCATION) as Location?
+        if(location != null) {
+            (requireActivity() as MainActivity).supportActionBar?.hide()
+        }
+
+
+        homeViewModel.getWeather(location)
         homeViewModel.weather.observe(viewLifecycleOwner) {
             Log.i("TAG", "listenForWeatherChange: $it  /  ${homeViewModel.isLocationSet()}")
             if(!homeViewModel.isLocationSet()) {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_location_dialog_title), getString(
-                        R.string.no_location_dialog_message
-                    )
-                )
-                findNavController().navigate(R.id.nav_settings)
+                gotoSettingsScreen()
             }
             else if(it != null) {
                 setupView(it)
@@ -146,6 +151,16 @@ class HomeFragment : Fragment() {
         progressDialog.setCancelable(false)
         progressDialog.show()
         binding.cardViewCurrentWeather.visibility = View.GONE
+    }
+
+    private fun gotoSettingsScreen() {
+        UIHelper.showAlertDialog(
+            requireContext(),
+            getString(R.string.no_location_dialog_title), getString(
+                R.string.no_location_dialog_message
+            )
+        )
+        findNavController().navigate(R.id.nav_settings)
     }
 
     @SuppressLint("NewApi")

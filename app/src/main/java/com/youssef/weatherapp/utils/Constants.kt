@@ -31,5 +31,8 @@ class Constants {
 
         const val SPEED_CONVERTER = 2.237
 
+        const val IS_CURRENT_LOCATION = "is_current_location"
+        const val FAVORITE_LOCATION = "favorite_location"
+
     }
 }
