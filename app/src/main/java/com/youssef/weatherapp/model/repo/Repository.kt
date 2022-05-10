@@ -75,6 +75,7 @@ class Repository private constructor(
         config.setLocale(locale)
         context.createConfigurationContext(config)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        Log.i("TAGsGs", "initLanguage: ")
     }
 
     override suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {

@@ -3,6 +3,7 @@ package com.youssef.weatherapp.view.home
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.view.settings.SettingsViewModel
 

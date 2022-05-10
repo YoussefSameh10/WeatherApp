@@ -61,7 +61,6 @@ class MapFragment : Fragment() {
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
             ),
             this,
-            false
         )
         mapViewModel = ViewModelProvider(activity!!, factory)[MapViewModel::class.java]
 

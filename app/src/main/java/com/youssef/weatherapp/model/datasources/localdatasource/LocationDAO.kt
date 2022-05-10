@@ -15,6 +15,9 @@ interface LocationDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun addFavoriteLocation(location: Location)
 
+    @Query("DELETE FROM location WHERE isCurrent=0 AND name=:name")
+    fun deleteDuplicateFavoriteLocation(name: String)
+
     @Delete
     fun deleteFavoriteLocation(location: Location)
 

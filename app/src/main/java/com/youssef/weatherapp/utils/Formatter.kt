@@ -45,9 +45,9 @@ class Formatter(val repo: RepositoryInterface) {
     fun formatTemperature(temperature: Double): String {
         val temperatureInt = temperature.toInt()
         return when(repo.getTemperatureUnit()) {
-            TemperatureUnitType.CELSIUS -> "$temperatureInt °C"
-            TemperatureUnitType.KELVIN -> "$temperatureInt K"
-            TemperatureUnitType.FAHRENHEIT -> "$temperatureInt °F"
+            TemperatureUnitType.CELSIUS -> "${temperatureInt}°C"
+            TemperatureUnitType.KELVIN -> "${temperatureInt}K"
+            TemperatureUnitType.FAHRENHEIT -> "${temperatureInt}°F"
         }
     }
 

@@ -61,6 +61,7 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
     }
 
     override fun addFavoriteLocation(location: Location) {
+        locationDAO.deleteDuplicateFavoriteLocation(location.name)
         locationDAO.addFavoriteLocation(location)
     }
 
