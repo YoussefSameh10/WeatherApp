@@ -18,6 +18,8 @@ data class Weather(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 */
+    var isCurrent: Boolean = false
+
     @SerializedName("timezone")
     var timezone: String = ""
 
@@ -39,6 +41,7 @@ data class Weather(
     constructor(
         latitude: Double,
         longitude: Double,
+        isCurrent: Boolean = false,
         timezone: String,
         timezoneOffset: Long,
         currentWeather: CurrentWeather,
@@ -46,6 +49,7 @@ data class Weather(
         dailyWeather: List<DailyWeather>,
         weatherAlerts: List<WeatherAlert>
     ): this(latitude, longitude) {
+        this.isCurrent = isCurrent
         this.timezone = timezone
         this.timezoneOffset = timezoneOffset
         this.currentWeather = currentWeather

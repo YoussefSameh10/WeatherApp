@@ -12,8 +12,10 @@ import com.youssef.weatherapp.model.pojo.Weather
 interface LocalDataSourceInterface {
     fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
     fun insertWeather(weather: Weather)
+    fun deleteWeather(timezone: String)
+    fun deleteCurrentWeather()
 
-    fun getScheduledAlerts(): LiveData<List<ScheduledAlert>>
+    fun getScheduledAlerts(): LiveData<ScheduledAlert>
     fun addScheduledAlert(scheduledAlert: ScheduledAlert)
     fun deleteScheduledAlert(scheduledAlert: ScheduledAlert)
 

@@ -41,6 +41,9 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
                     withContext(Dispatchers.Main) {
                         weather.observe(owner) {
                             if (it != null) {
+                                if(favoriteLocation == null) {
+                                    it.isCurrent = true
+                                }
                                 _weather.postValue(it)
                                 saveWeather(it)
                             }
@@ -57,6 +60,9 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
     private fun saveWeather(weather: Weather) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.i("TAG", "saveWeather: " + weather)
+            if(weather.isCurrent) {
+                homeModel.deletePreviousWeather()
+            }
             homeModel.saveCurrentWeather(weather)
         }
     }

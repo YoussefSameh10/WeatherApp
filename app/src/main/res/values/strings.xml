@@ -39,4 +39,5 @@
     <string name="humidity">Humidity</string>
     <string name="clouds">Clouds</string>
     <string name="pressure">Pressure</string>
+    <string name="add_alert">Add Alert</string>
 </resources>

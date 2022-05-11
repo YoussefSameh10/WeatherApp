@@ -19,11 +19,13 @@ interface RepositoryInterface {
 
     suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
     fun insertWeather(weather: Weather)
+    fun deleteWeather(timezone: String)
+    fun deleteCurrentWeather()
 
-    fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert>
+    suspend fun getTodaysAlerts(latitude: Double, longitude: Double): Weather?
     suspend fun getCityName(latitude: Double, longitude: Double): String
 
-    fun getScheduledAlerts(): LiveData<List<ScheduledAlert>>
+    fun getScheduledAlerts(): LiveData<ScheduledAlert>
     fun addScheduledAlert(scheduledAlert: ScheduledAlert)
     fun deleteScheduledAlert(scheduledAlert: ScheduledAlert)
 

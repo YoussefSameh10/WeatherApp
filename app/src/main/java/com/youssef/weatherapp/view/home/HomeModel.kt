@@ -14,6 +14,10 @@ class HomeModel(val repo: RepositoryInterface) {
         return repo.getCurrentLocation()
     }
 
+    fun deletePreviousWeather() {
+        repo.deleteCurrentWeather()
+    }
+
     fun saveCurrentWeather(weather: Weather) {
         repo.insertWeather(weather)
     }
@@ -21,4 +25,6 @@ class HomeModel(val repo: RepositoryInterface) {
     fun isLocationSet(): Boolean {
         return repo.isCurrentLocationSet()
     }
+
+
 }
