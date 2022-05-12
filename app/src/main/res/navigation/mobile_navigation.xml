@@ -7,34 +7,34 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.youssef.weatherapp.view.home.HomeFragment"
+        android:name="com.youssef.weatherapp.modules.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_favorites"
-        android:name="com.youssef.weatherapp.view.favorites.FavoritesFragment"
+        android:name="com.youssef.weatherapp.modules.favorites.FavoritesFragment"
         android:label="@string/menu_favorites"
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="com.youssef.weatherapp.view.settings.SettingsFragment"
+        android:name="com.youssef.weatherapp.modules.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/nav_alerts"
-        android:name="com.youssef.weatherapp.view.alerts.AlertsFragment"
+        android:name="com.youssef.weatherapp.modules.alerts.AlertsFragment"
         android:label="@string/menu_alerts"
         tools:layout="@layout/fragment_alerts" />
     <fragment
         android:id="@+id/fragment_map"
-        android:name="com.youssef.weatherapp.view.map.MapFragment"
+        android:name="com.youssef.weatherapp.modules.map.MapFragment"
         android:label="@string/map"
         tools:layout="@layout/fragment_map" />
     <fragment
         android:id="@+id/fragment_add_alert"
-        android:name="com.youssef.weatherapp.view.addalert.AddAlertFragment"
+        android:name="com.youssef.weatherapp.modules.addalert.AddAlertFragment"
         android:label="@string/add_alert"
         tools:layout="@layout/fragment_add_alert" />
 </navigation>
