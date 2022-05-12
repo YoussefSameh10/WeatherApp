@@ -65,5 +65,15 @@ class Converters {
         return Serializer.deserializeWeatherCondition(str)
     }
 
+    @TypeConverter
+    fun fromLocation(location: Location): String {
+        return Serializer.serializeLocation(location)
+    }
+
+    @TypeConverter
+    fun toLocation(str: String): Location {
+        return Serializer.deserializeLocation(str)
+    }
+
 
 }

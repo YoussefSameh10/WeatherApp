@@ -34,5 +34,8 @@ class Constants {
         const val IS_CURRENT_LOCATION = "is_current_location"
         const val FAVORITE_LOCATION = "favorite_location"
 
+        const val SCHEDULED_ALERT = "scheduled_alert"
+        const val PERIODIC_TIME_REQUEST_TAG = "periodic_time_request_tag"
+
     }
 }

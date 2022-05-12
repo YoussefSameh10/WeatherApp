@@ -1,6 +1,7 @@
 package com.youssef.weatherapp.model.datasources.localdatasource
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.pojo.Location
@@ -35,12 +36,22 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
     }
 
     override fun insertWeather(weather: Weather) {
-        weatherDAO.deleteWeather(weather.latitude, weather.longitude)
+        Log.i("DELETE", "insertWeather: ")
+        deleteWeather(weather.timezone)
         weatherDAO.insertWeather(weather)
     }
 
+    override fun deleteWeather(timezone: String) {
+        weatherDAO.deleteWeather(timezone)
+    }
 
-    override fun getScheduledAlerts(): LiveData<List<ScheduledAlert>> {
+    override fun deleteCurrentWeather() {
+        Log.i("DELETE", "deleteCurrentWeather: ")
+        weatherDAO.deleteCurrentWeather()
+    }
+
+
+    override fun getScheduledAlerts(): LiveData<ScheduledAlert> {
         return scheduleAlertDAO.getScheduledAlerts()
     }
 
@@ -67,6 +78,7 @@ class LocalDataSource(context: Context): LocalDataSourceInterface {
 
     override fun deleteFavoriteLocation(location: Location) {
         locationDAO.deleteFavoriteLocation(location)
+        deleteWeather(location.name)
     }
 
     override fun addCurrentLocation(location: Location) {

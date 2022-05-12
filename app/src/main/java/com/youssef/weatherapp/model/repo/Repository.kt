@@ -97,14 +97,21 @@ class Repository private constructor(
         localSource.insertWeather(weather)
     }
 
+    override fun deleteWeather(timezone: String) {
+        localSource.deleteWeather(timezone)
+    }
+
+    override fun deleteCurrentWeather() {
+        localSource.deleteCurrentWeather()
+    }
 
 
-    override fun getTodaysAlerts(latitude: Double, longitude: Double): List<WeatherAlert> {
+    override suspend fun getTodaysAlerts(latitude: Double, longitude: Double): Weather? {
         val response = remoteSource.getTodaysAlerts(latitude, longitude, language.string, temperatureUnit.string)
         return if(response.isSuccessful) {
-            response.body() ?: emptyList()
+            response.body()
         } else {
-            emptyList()
+            null
         }
     }
 
@@ -118,7 +125,7 @@ class Repository private constructor(
         }
     }
 
-    override fun getScheduledAlerts(): LiveData<List<ScheduledAlert>> {
+    override fun getScheduledAlerts(): LiveData<ScheduledAlert> {
         return localSource.getScheduledAlerts()
     }
 

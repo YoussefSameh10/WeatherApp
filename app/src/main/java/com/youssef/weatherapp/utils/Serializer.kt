@@ -64,5 +64,13 @@ class Serializer {
         fun deserializeLocation(str: String): Location {
             return Gson().fromJson(str, Location::class.java)
         }
+
+        fun serializeScheduledAlert(scheduledAlert: ScheduledAlert): String {
+            return Gson().toJson(scheduledAlert)
+        }
+
+        fun deserializeScheduledAlert(str: String): ScheduledAlert {
+            return Gson().fromJson(str, ScheduledAlert::class.java)
+        }
     }
 }

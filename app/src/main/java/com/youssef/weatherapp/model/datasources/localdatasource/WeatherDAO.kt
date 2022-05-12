@@ -15,6 +15,9 @@ interface WeatherDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertWeather(weather: Weather)
 
-    @Query("DELETE FROM weather WHERE latitude=:latitude AND longitude=:longitude")
-    fun deleteWeather(latitude: Double, longitude: Double)
+    @Query("DELETE FROM weather WHERE timezone=:timezone")
+    fun deleteWeather(timezone: String)
+
+    @Query("DELETE FROM weather WHERE isCurrent=1")
+    fun deleteCurrentWeather()
 }

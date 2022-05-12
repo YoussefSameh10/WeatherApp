@@ -19,8 +19,6 @@ class FavoritesViewModel(private val repo: RepositoryInterface, private val owne
 
     private var _cityName: MutableLiveData<Event<String>> = MutableLiveData()
 
-    private val formatter = Formatter(repo)
-    
     fun getFavoriteLocations() {
 
         Log.i(TAG, "getFavoriteLocations: ")
@@ -35,7 +33,6 @@ class FavoritesViewModel(private val repo: RepositoryInterface, private val owne
                 }
             }
         }
-
     }
 
     fun addFavoriteLocation(location: Location) {
@@ -44,7 +41,7 @@ class FavoritesViewModel(private val repo: RepositoryInterface, private val owne
             it.getContentIfNotHandled()?.let { cityName ->
                 Log.i(TAG, "addFavoriteLocation: $cityName")
                 viewModelScope.launch(Dispatchers.IO) {
-                    location.name = formatter.formatCityName(cityName)
+                    location.name = cityName
                     location.isCurrent = false
                     Log.i(TAG, "addFavoriteLocation: $location")
                     repo.addFavoriteLocation(location)
