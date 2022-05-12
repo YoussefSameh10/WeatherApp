@@ -17,7 +17,7 @@ interface RepositoryInterface {
 
     fun initLanguage()
 
-    suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    suspend fun getWeather(location: Location): LiveData<Weather>
     fun insertWeather(weather: Weather)
     fun deleteWeather(timezone: String)
     fun deleteCurrentWeather()

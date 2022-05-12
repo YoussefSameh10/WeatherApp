@@ -10,7 +10,7 @@ import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
 
 interface LocalDataSourceInterface {
-    fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    fun getWeather(timezone: String): LiveData<Weather>
     fun insertWeather(weather: Weather)
     fun deleteWeather(timezone: String)
     fun deleteCurrentWeather()

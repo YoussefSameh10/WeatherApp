@@ -37,5 +37,7 @@ class Constants {
         const val SCHEDULED_ALERT = "scheduled_alert"
         const val PERIODIC_TIME_REQUEST_TAG = "periodic_time_request_tag"
 
+        const val DAY_TO_MILLI_SEC = 24*60*60*1000
+
     }
 }
