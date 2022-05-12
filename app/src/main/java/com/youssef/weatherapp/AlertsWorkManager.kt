@@ -102,11 +102,11 @@ class AlertsWorkManager(val context: Context, private val workerParams: WorkerPa
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showNotification(event: String, cityName: String, isThereAlert: Boolean) {
-        var title = "Everything is fine today"
-        var message = "ENJOY!"
+        var title = context.getString(R.string.every_thing_is_fine)
+        var message = context.getString(R.string.enjoy)
         if(isThereAlert) {
             title = event
-            message = "There will be " + event + " in " + cityName
+            message = context.getString(R.string.there_will_be) + event + context.getString(R.string.in_word) + cityName
         }
 
         val notificationManager =

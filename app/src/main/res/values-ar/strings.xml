@@ -32,4 +32,13 @@
     <string name="humidity">الرطوبة</string>
     <string name="clouds">السحب</string>
     <string name="pressure">ضغط الهواء</string>
+    <string name="add_alert">اضافة منبه</string>
+    <string name="remove_alert">حذف منبه</string>
+    <string name="remove_alert_confirm_message">هل انت نتاكد انك تريد حذف هذا المنبه؟</string>
+    <string name="notification">اشعار</string>
+    <string name="alarm">منبه</string>
+    <string name="starting_from">البداية</string>
+    <string name="until">حتي</string>
+    <string name="submit">تأكيد</string>
+    <string name="no_alerts_added">لا يوجد منبهات</string>
 </resources>

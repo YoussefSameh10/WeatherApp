@@ -124,8 +124,8 @@ class AlertsFragment : Fragment() {
         binding.imageViewDelete.setOnClickListener {
             UIHelper.showConfirmationDialog(
                 requireContext(),
-                "Remove Alert",
-                "Are you sure you want to remove this alert?",
+                getString(R.string.remove_alert),
+                getString(R.string.remove_alert_confirm_message),
                 confirmDelete,
                 {}
             )

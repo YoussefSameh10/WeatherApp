@@ -40,4 +40,16 @@
     <string name="clouds">Clouds</string>
     <string name="pressure">Pressure</string>
     <string name="add_alert">Add Alert</string>
+    <string name="remove_alert">Remove Alert</string>
+    <string name="remove_alert_confirm_message">Are you sure you want to remove this alert?</string>
+    <string name="notification">Notification</string>
+    <string name="alarm">Alarm</string>
+    <string name="starting_from">Starting from</string>
+    <string name="until">Until</string>
+    <string name="submit">Submit</string>
+    <string name="no_alerts_added">No Alerts Added</string>
+    <string name="every_thing_is_fine">Everything is fine today</string>
+    <string name="enjoy">ENJOY!</string>
+    <string name="there_will_be">"There will be "</string>
+    <string name="in_word">" in "</string>
 </resources>
