@@ -81,7 +81,6 @@ class AddAlertFragment : Fragment() {
 
     private fun setupTimePickers() {
         binding.timePickerStart.setIs24HourView(true)
-        binding.timePickerEnd.setIs24HourView(true)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,17 +90,17 @@ class AddAlertFragment : Fragment() {
     }
 
     private fun handleSubmitButtonVisibility() {
-        binding.buttonSubmit.visibility = View.GONE
+        binding.buttonSubmit.isEnabled = false
         if(binding.radioButtonAlarm.isChecked || binding.radioButtonNotification.isChecked) {
-            binding.buttonSubmit.visibility = View.VISIBLE
+            binding.buttonSubmit.isEnabled = true
         }
 
         binding.radioButtonAlarm.setOnClickListener {
-            binding.buttonSubmit.visibility = View.VISIBLE
+            binding.buttonSubmit.isEnabled = true
         }
 
         binding.radioButtonNotification.setOnClickListener {
-            binding.buttonSubmit.visibility = View.VISIBLE
+            binding.buttonSubmit.isEnabled = true
         }
     }
 
@@ -114,7 +113,7 @@ class AddAlertFragment : Fragment() {
             )
             val endLocalDateTime = LocalDateTime.of(
                 LocalDate.of(binding.datePickerEnd.year, binding.datePickerEnd.month + 1, binding.datePickerEnd.dayOfMonth),
-                LocalTime.of(binding.timePickerEnd.hour, binding.timePickerEnd.minute)
+                LocalTime.of(binding.timePickerStart.hour, binding.timePickerStart.minute)
             )
 
             val isAlarm: Boolean = binding.radioButtonAlarm.isChecked

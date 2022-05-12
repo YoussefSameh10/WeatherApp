@@ -22,15 +22,16 @@ class Formatter(val repo: RepositoryInterface) {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun formatDate(datetime: Long, offset: Long): String {
-        val dt = LocalDateTime.ofEpochSecond(datetime, 0, ZoneOffset.ofTotalSeconds(offset.toInt()))
-        return dt.toLocalDate().format(DateTimeFormatter.ofPattern("dd MMM"));
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     fun formatTime(datetime: Long, offset: Long): String {
         val dt = LocalDateTime.ofEpochSecond(datetime, 0, ZoneOffset.ofTotalSeconds(offset.toInt()))
         return dt.toLocalTime().format(DateTimeFormatter.ofPattern("kk:mm"));
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatDateTimeToDate(dt: String): String {
+        val date = LocalDateTime.parse(dt).toLocalDate()
+        val formattedDate = date.format(DateTimeFormatter.ofPattern("E dd MMM"))
+        return formattedDate.toString()
     }
 
     fun formatCityName(fullName: String): String {

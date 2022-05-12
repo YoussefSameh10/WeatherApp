@@ -41,6 +41,7 @@ class AlertsViewModel(private val repo: RepositoryInterface, private val owner: 
                         Log.i("TAG", "getAlertTrue: ")
                         isAlertExist.postValue(true)
                         _location.postValue(it.location)
+                        _alert.postValue(it)
                         dbAlert = it
                     }
                 }

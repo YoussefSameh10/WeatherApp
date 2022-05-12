@@ -52,4 +52,5 @@
     <string name="enjoy">ENJOY!</string>
     <string name="there_will_be">"There will be "</string>
     <string name="in_word">" in "</string>
+    <string name="alert_time">Alert time</string>
 </resources>

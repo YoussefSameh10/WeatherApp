@@ -1,11 +1,13 @@
 package com.youssef.weatherapp.modules.alerts
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.youssef.weatherapp.R
@@ -36,6 +38,7 @@ class AlertsFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,9 +86,16 @@ class AlertsFragment : Fragment() {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupView() {
         alertsViewModel.location.observe(viewLifecycleOwner) {
             binding.textViewCityName.text = formatter.formatCityName(it.name)
+        }
+
+        alertsViewModel.alert.observe(viewLifecycleOwner) {
+            binding.textViewTime.text = it.alarmTime
+            binding.textViewStartDate.text = formatter.formatDateTimeToDate(it.startTime)
+            binding.textViewEndDate.text = formatter.formatDateTimeToDate(it.endTime)
         }
         alertsViewModel.isAlertExist.observe(viewLifecycleOwner) {
             if(it) {
@@ -106,15 +116,13 @@ class AlertsFragment : Fragment() {
 
     private fun showViews() {
         Log.i("TAG", "showViews: ")
-        binding.textViewCityName.visibility = View.VISIBLE
-        binding.imageViewDelete.visibility = View.VISIBLE
+        binding.cardViewAlert.visibility = View.VISIBLE
         binding.textViewNoAlertsAdded.visibility = View.GONE
         binding.buttonAdd.visibility = View.GONE
     }
 
     private fun hideViews() {
-        binding.textViewCityName.visibility = View.GONE
-        binding.imageViewDelete.visibility = View.GONE
+        binding.cardViewAlert.visibility = View.GONE
         binding.textViewNoAlertsAdded.visibility = View.VISIBLE
         binding.buttonAdd.visibility = View.VISIBLE
     }
