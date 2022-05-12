@@ -44,7 +44,7 @@ class Serializer {
             return Gson().toJson(weatherAlertList)
         }
 
-        fun deserializeWeatherAlertList(str: String): List<WeatherAlert> {
+        fun deserializeWeatherAlertList(str: String): List<WeatherAlert>? {
             val weatherAlertType = object : TypeToken<List<WeatherAlert>>() {}.type
             return Gson().fromJson<List<WeatherAlert>>(str, weatherAlertType)
         }

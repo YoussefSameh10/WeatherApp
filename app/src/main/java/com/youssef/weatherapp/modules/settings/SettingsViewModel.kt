@@ -23,11 +23,12 @@ import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.utils.Constants
 import com.youssef.weatherapp.utils.Event
+import com.youssef.weatherapp.utils.NetworkConnectivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : ViewModel() {
+class SettingsViewModel(private val repo: RepositoryInterface, private val owner: LifecycleOwner, private val context: Context) : ViewModel() {
 
     var settingsModel: SettingsModel = SettingsModel(repo)
 
@@ -61,6 +62,7 @@ class SettingsViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner
     }
 
     fun getCityName(latitude: Double, longitude: Double) {
+        if(NetworkConnectivity.isNetworkAvailable(context))
         viewModelScope.launch(Dispatchers.IO) {
             val cityNameLive = settingsModel.getCityName(latitude, longitude)
             withContext(Dispatchers.Main) {

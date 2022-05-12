@@ -36,7 +36,7 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
             Log.i("TAGGGG", "getWeatherObserve: $location")
             if (location != null) {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val weather = homeModel.getWeather(location.latitude, location.longitude)
+                    val weather = homeModel.getWeather(location)
                     withContext(Dispatchers.Main) {
                         weather.observe(owner) {
                             if (it != null) {

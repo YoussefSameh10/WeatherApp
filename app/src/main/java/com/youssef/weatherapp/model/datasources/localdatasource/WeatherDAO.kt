@@ -9,8 +9,8 @@ import com.youssef.weatherapp.model.pojo.Weather
 
 @Dao
 interface WeatherDAO {
-    @Query("SELECT * FROM weather WHERE latitude=:latitude AND longitude=:longitude")
-    fun getWeather(latitude: Double, longitude: Double): LiveData<Weather>
+    @Query("SELECT * FROM weather WHERE timezone=:timezone")
+    fun getWeather(timezone: String): LiveData<Weather>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertWeather(weather: Weather)

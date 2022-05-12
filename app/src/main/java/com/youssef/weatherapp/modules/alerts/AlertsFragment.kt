@@ -16,6 +16,7 @@ import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.repo.Repository
 import com.youssef.weatherapp.utils.Formatter
+import com.youssef.weatherapp.utils.NetworkConnectivity
 import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
 
@@ -110,7 +111,16 @@ class AlertsFragment : Fragment() {
         handleDelete()
 
         binding.buttonAdd.setOnClickListener {
-            findNavController().navigate(R.id.fragment_add_alert)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                findNavController().navigate(R.id.fragment_add_alert)
+            }
+            else {
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_add_alert_message)
+                )
+            }
         }
     }
 

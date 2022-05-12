@@ -23,6 +23,8 @@ import com.youssef.weatherapp.utils.Constants.Companion.IS_CURRENT_LOCATION
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.modules.map.MapViewModel
 import com.youssef.weatherapp.modules.map.MapViewModelFactory
+import com.youssef.weatherapp.utils.NetworkConnectivity
+import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
 
 class FavoritesFragment : Fragment() {
@@ -99,8 +101,27 @@ class FavoritesFragment : Fragment() {
 
         (requireActivity() as MainActivity).supportActionBar?.show()
 
+        favoritesViewModel.isFavoriteExist.observe(viewLifecycleOwner) {
+            if(it) {
+                binding.textViewNoFavorites.visibility = View.GONE
+            }
+            else {
+                binding.textViewNoFavorites.visibility = View.VISIBLE
+            }
+        }
+
         binding.buttonAdd.setOnClickListener() {
-            findNavController().navigate(R.id.fragment_map)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                findNavController().navigate(R.id.fragment_map)
+            }
+            else {
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_add_favorite_message)
+                )
+            }
+
         }
 
         handleLocationClicked()
@@ -121,7 +142,14 @@ class FavoritesFragment : Fragment() {
 
     private fun handleLocationDeleted() {
         locationDeleted = { location ->
-            favoritesViewModel.deleteFavoriteLocation(location)
+            UIHelper.showConfirmationDialog(
+                requireContext(),
+                "Remove from favorites",
+                "Are you sure you want to remove this city from favorites",
+                {favoritesViewModel.deleteFavoriteLocation(location)},
+                {}
+            )
+
         }
     }
 

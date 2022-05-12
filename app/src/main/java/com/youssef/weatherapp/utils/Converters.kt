@@ -51,7 +51,7 @@ class Converters {
     }
 
     @TypeConverter
-    fun toWeatherAlertList(str: String): List<WeatherAlert> {
+    fun toWeatherAlertList(str: String): List<WeatherAlert>? {
         return Serializer.deserializeWeatherAlertList(str)
     }
 

@@ -6,8 +6,8 @@ import com.youssef.weatherapp.model.pojo.Weather
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 
 class HomeModel(val repo: RepositoryInterface) {
-    suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
-        return repo.getWeather(latitude, longitude)
+    suspend fun getWeather(location: Location): LiveData<Weather> {
+        return repo.getWeather(location)
     }
 
     fun getCurrentLocation(): LiveData<Location> {

@@ -36,7 +36,7 @@ data class Weather(
     var dailyWeather: List<DailyWeather> = emptyList()
 
     @SerializedName("alerts")
-    var weatherAlerts: List<WeatherAlert> = emptyList()
+    var weatherAlerts: List<WeatherAlert>? = emptyList()
 
     constructor(
         latitude: Double,

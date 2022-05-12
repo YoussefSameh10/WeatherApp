@@ -24,6 +24,7 @@ import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.Repository
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import com.youssef.weatherapp.utils.Formatter
+import com.youssef.weatherapp.utils.NetworkConnectivity
 import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
 
@@ -82,7 +83,8 @@ class SettingsFragment : Fragment() {
             Repository.getInstance(
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
             ),
-            this
+            this,
+            requireContext()
         )
         settingsViewModel =
             ViewModelProvider(this, settingsViewModelFactory)[SettingsViewModel::class.java]
@@ -192,12 +194,30 @@ class SettingsFragment : Fragment() {
 
     private fun handleLocationMethodChange() {
         binding!!.textViewGPS.setOnClickListener {
-            progressDialog.show()
-            settingsViewModel.handleGPS(activity!!, requireContext())
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                progressDialog.show()
+                settingsViewModel.handleGPS(activity!!, requireContext())
+            }
+            else {
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_message)
+                )
+            }
         }
 
         binding!!.textViewMap.setOnClickListener {
-            mapViewModel.navigateFromSettingsToMap(this)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                mapViewModel.navigateFromSettingsToMap(this)
+            }
+            else {
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_message)
+                )
+            }
         }
 
         listenToLocationChange()

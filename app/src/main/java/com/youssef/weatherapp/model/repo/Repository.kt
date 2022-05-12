@@ -78,19 +78,19 @@ class Repository private constructor(
         Log.i("TAGsGs", "initLanguage: ")
     }
 
-    override suspend fun getWeather(latitude: Double, longitude: Double): LiveData<Weather> {
-        Log.i("TAG", "getWeatherRepo: ")
+    override suspend fun getWeather(location: Location): LiveData<Weather> {
         if(NetworkConnectivity.isNetworkAvailable(context)) {
             val result = MutableLiveData<Weather>()
             Log.i("TAG", "getWeatherRepo: ")
-            val weather = getWeatherRemote(latitude, longitude)
+            val weather = getWeatherRemote(location.latitude, location.longitude)
             withContext(Dispatchers.Main) {
                 result.postValue(weather!!)
                 Log.i("TAG", "getWeatherRepo: " + weather)
             }
             return result
         }
-        return getWeatherLocal(latitude, longitude)
+        Log.i("TAG", "getWeatherRepoNoNetwork: ")
+        return getWeatherLocal(location.name)
     }
 
     override fun insertWeather(weather: Weather) {
@@ -244,8 +244,9 @@ class Repository private constructor(
         }
     }
 
-    private fun getWeatherLocal(latitude: Double, longitude: Double): LiveData<Weather> {
-        return localSource.getWeather(latitude, longitude)
+    private fun getWeatherLocal(timezone: String): LiveData<Weather> {
+        Log.i("TAG", "getWeatherLocal: $timezone")
+        return localSource.getWeather(timezone)
     }
 
 

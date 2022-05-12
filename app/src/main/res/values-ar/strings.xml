@@ -34,11 +34,21 @@
     <string name="pressure">ضغط الهواء</string>
     <string name="add_alert">اضافة منبه</string>
     <string name="remove_alert">حذف منبه</string>
-    <string name="remove_alert_confirm_message">هل انت نتاكد انك تريد حذف هذا المنبه؟</string>
+    <string name="remove_alert_confirm_message">هل انت متاكد انك تريد حذف هذا المنبه؟</string>
     <string name="notification">اشعار</string>
     <string name="alarm">منبه</string>
     <string name="starting_from">البداية</string>
     <string name="until">حتي</string>
     <string name="submit">تأكيد</string>
     <string name="no_alerts_added">لا يوجد منبهات</string>
+    <string name="every_thing_is_fine">الطقس جيد اليوم</string>
+    <string name="enjoy">استمتع بوقتك</string>
+    <string name="there_will_be">سيكون هناك</string>
+    <string name="in_word">في</string>
+    <string name="alert_time">ميعاد المنبه</string>
+    <string name="no_connection">لا يوجد اتصال بالانترنت</string>
+    <string name="no_connection_message">لابد ان تكون متصل بالانترنت لتجديد موقعك</string>
+    <string name="no_connection_add_favorite_message">لابد ان تكون متصل بالانترنت لاضافة موقع للمواقع المفضلة</string>
+    <string name="no_connection_add_alert_message">لابد ان تكون متصل بالانترنت لاضافة منبه</string>
+    <string name="no_favorite_locations">لا يوجد مواقع مفضلة لديك</string>
 </resources>

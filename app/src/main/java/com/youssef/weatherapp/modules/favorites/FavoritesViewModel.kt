@@ -18,6 +18,8 @@ class FavoritesViewModel(private val repo: RepositoryInterface, private val owne
 
     private var _cityName: MutableLiveData<Event<String>> = MutableLiveData()
 
+    var isFavoriteExist: MutableLiveData<Boolean> = MutableLiveData(false)
+
     fun getFavoriteLocations() {
 
         Log.i(TAG, "getFavoriteLocations: ")
@@ -27,8 +29,15 @@ class FavoritesViewModel(private val repo: RepositoryInterface, private val owne
             withContext(Dispatchers.Main) {
                 locations.removeObservers(owner)
                 locations.observe(owner) {
-                    _favoriteLocations.postValue(it)
-                    Log.i(TAG, "getFavoriteLocations: $it")
+                    if(it != null && it.size != 0) {
+                        _favoriteLocations.postValue(it)
+                        isFavoriteExist.postValue(true)
+                        Log.i(TAG, "getFavoriteLocations: $it")
+                    }
+                    else {
+                        _favoriteLocations.postValue(it)
+                        isFavoriteExist.postValue(false)
+                    }
                 }
             }
         }

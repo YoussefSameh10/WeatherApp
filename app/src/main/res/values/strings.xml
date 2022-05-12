@@ -53,4 +53,9 @@
     <string name="there_will_be">"There will be "</string>
     <string name="in_word">" in "</string>
     <string name="alert_time">Alert time</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="no_connection_message">You must have internet connection to set your location</string>
+    <string name="no_connection_add_favorite_message">You must have internet connection to add a place to your favorites</string>
+    <string name="no_connection_add_alert_message">You must have internet connection to add an alert</string>
+    <string name="no_favorite_locations">No favorite locations</string>
 </resources>
