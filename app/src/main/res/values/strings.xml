@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather</string>
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="nav_header_title" translatable="false">Android Studio</string>
@@ -58,4 +58,5 @@
     <string name="no_connection_add_favorite_message">You must have internet connection to add a place to your favorites</string>
     <string name="no_connection_add_alert_message">You must have internet connection to add an alert</string>
     <string name="no_favorite_locations">No favorite locations</string>
+    <string name="no_connection_change_preferences_message">You must have internet connection to change your preferences</string>
 </resources>

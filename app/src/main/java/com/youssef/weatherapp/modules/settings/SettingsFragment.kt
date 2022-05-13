@@ -109,7 +109,18 @@ class SettingsFragment : Fragment() {
 
         (requireActivity() as MainActivity).supportActionBar?.show()
 
-        when(settingsViewModel.getLanguagePreference()) {
+        setLanguageRadioButton()
+
+        setTemperatureUnitRadioButton()
+
+        setSpeedUnitRadioButton()
+
+
+        handleViewInteractions()
+    }
+
+    private fun setLanguageRadioButton() {
+        when (settingsViewModel.getLanguagePreference()) {
             LanguageType.EN -> {
                 binding!!.radioButtonEnglish.isChecked = true
             }
@@ -117,8 +128,10 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonArabic.isChecked = true
             }
         }
+    }
 
-        when(settingsViewModel.getTemperatureUnitPreference()) {
+    private fun setTemperatureUnitRadioButton() {
+        when (settingsViewModel.getTemperatureUnitPreference()) {
             TemperatureUnitType.CELSIUS -> {
                 binding!!.radioButtonCelsius.isChecked = true
             }
@@ -129,8 +142,10 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonKelvin.isChecked = true
             }
         }
+    }
 
-        when(settingsViewModel.getSpeedUnitPreference()) {
+    private fun setSpeedUnitRadioButton() {
+        when (settingsViewModel.getSpeedUnitPreference()) {
             SpeedUnitType.MPS -> {
                 binding!!.radioButtonMPS.isChecked = true
             }
@@ -138,9 +153,6 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonMPH.isChecked = true
             }
         }
-
-
-        handleViewInteractions()
     }
 
     private fun handleViewInteractions() {
@@ -154,22 +166,74 @@ class SettingsFragment : Fragment() {
 
     private fun handleSpeedUnitChange() {
         binding!!.radioButtonMPS.setOnClickListener {
-            settingsViewModel.setSpeedUnit(SpeedUnitType.MPS)
+
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setSpeedUnit(SpeedUnitType.MPS)
+            }
+            else {
+                setSpeedUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonMPH.setOnClickListener {
-            settingsViewModel.setSpeedUnit(SpeedUnitType.MPH)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setSpeedUnit(SpeedUnitType.MPH)
+            }
+            else {
+                setSpeedUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
+
         }
     }
 
     private fun handleTemperatureUnitChange() {
         binding!!.radioButtonCelsius.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.CELSIUS)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.CELSIUS)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonFahrenheit.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.FAHRENHEIT)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.FAHRENHEIT)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonKelvin.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.KELVIN)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.KELVIN)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
     }
 

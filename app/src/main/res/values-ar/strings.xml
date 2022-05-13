@@ -51,4 +51,5 @@
     <string name="no_connection_add_favorite_message">لابد ان تكون متصل بالانترنت لاضافة موقع للمواقع المفضلة</string>
     <string name="no_connection_add_alert_message">لابد ان تكون متصل بالانترنت لاضافة منبه</string>
     <string name="no_favorite_locations">لا يوجد مواقع مفضلة لديك</string>
+    <string name="no_connection_change_preferences_message">لابد ان تكون متصل بالانترنت لتعديل الاعدادات</string>
 </resources>
