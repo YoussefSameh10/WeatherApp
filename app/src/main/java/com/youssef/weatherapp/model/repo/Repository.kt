@@ -42,8 +42,8 @@ class Repository private constructor(
     val context: Context,
     var localSource: LocalDataSourceInterface,
     var remoteSource: RemoteDataSourceInterface
-): RepositoryInterface {
-
+) {
+/*
     companion object {
         private var instance: RepositoryInterface? = null
 
@@ -250,4 +250,6 @@ class Repository private constructor(
     }
 
 
+
+ */
 }

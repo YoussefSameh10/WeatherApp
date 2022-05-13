@@ -6,12 +6,16 @@ import androidx.lifecycle.*
 import com.youssef.weatherapp.workmanager.RequestManager
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
-import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AlertsViewModel(private val repo: RepositoryInterface, private val owner: LifecycleOwner, private val context: Context): ViewModel() {
+class AlertsViewModel(
+    private val repo: AlertRepositoryInterface,
+    private val owner: LifecycleOwner,
+    private val context: Context
+): ViewModel() {
 
     private var _alert: MutableLiveData<ScheduledAlert> = MutableLiveData()
     val alert: LiveData<ScheduledAlert> get() = _alert

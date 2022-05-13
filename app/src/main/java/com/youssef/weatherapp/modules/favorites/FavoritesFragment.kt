@@ -18,18 +18,18 @@ import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourc
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
 import com.youssef.weatherapp.utils.Constants.Companion.FAVORITE_LOCATION
 import com.youssef.weatherapp.utils.Constants.Companion.IS_CURRENT_LOCATION
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.modules.map.MapViewModel
-import com.youssef.weatherapp.modules.map.MapViewModelFactory
 import com.youssef.weatherapp.utils.NetworkConnectivity
 import com.youssef.weatherapp.utils.UIHelper
 import retrofit2.create
 
 class FavoritesFragment : Fragment() {
 
-    private val TAG = "Favorites"
     private lateinit var favoritesViewModel: FavoritesViewModel
     private lateinit var mapViewModel: MapViewModel
     private var _binding: FragmentFavoritesBinding? = null
@@ -68,7 +68,7 @@ class FavoritesFragment : Fragment() {
     private fun setupViewModel() {
         val service = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
         val favoritesViewModelFactory = FavoritesViewModelFactory(
-            Repository.getInstance(
+            LocationRepository.getInstance(
                 requireContext(),
                 LocalDataSource.getInstance(requireContext()),
                 service
@@ -78,23 +78,12 @@ class FavoritesFragment : Fragment() {
         favoritesViewModel = ViewModelProvider(this, favoritesViewModelFactory)[FavoritesViewModel::class.java]
         favoritesViewModel.getFavoriteLocations()
 
-        val mapViewModelFactory = MapViewModelFactory(
-            Repository.getInstance(
-                requireContext(),
-                LocalDataSource.getInstance(requireContext()),
-                service
-            ),
-            activity!!
-        )
-        mapViewModel = ViewModelProvider(activity!!, mapViewModelFactory)[MapViewModel::class.java]
+
+        mapViewModel = ViewModelProvider(activity!!)[MapViewModel::class.java]
     }
 
     private fun setupFormatter() {
-        formatter = Formatter(Repository.getInstance(
-            requireContext(),
-            LocalDataSource.getInstance(requireContext()),
-            RetrofitHelper.getInstance().create()
-        ))
+        formatter = Formatter(PreferencesRepository.getInstance(requireContext()))
     }
 
     private fun setupView() {
@@ -178,7 +167,7 @@ class FavoritesFragment : Fragment() {
 
     private fun listenForMapLocationAdded() {
         mapViewModel.finalLocation.observe(viewLifecycleOwner) {
-            Log.i(TAG, "listenForMapLocationAdded: ")
+            Log.i("TAG", "listenForMapLocationAdded: ")
             it.getContentIfNotHandled()?.let { location ->
                 favoritesViewModel.addFavoriteLocation(location)
             }

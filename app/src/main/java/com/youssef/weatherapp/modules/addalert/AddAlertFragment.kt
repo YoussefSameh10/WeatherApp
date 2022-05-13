@@ -14,6 +14,8 @@ import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepository
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepository
 import com.youssef.weatherapp.utils.Constants.Companion.DAY_TO_MILLI_SEC
 import retrofit2.create
 import java.time.LocalDate
@@ -50,8 +52,6 @@ class AddAlertFragment : Fragment() {
         return binding.root
     }
 
-
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -59,7 +59,12 @@ class AddAlertFragment : Fragment() {
 
     private fun setupViewModel() {
         val factory = AddAlertViewModelFactory(
-            Repository.getInstance(
+            AlertRepository.getInstance(
+                requireContext(),
+                LocalDataSource.getInstance(requireContext()),
+                RetrofitHelper.getInstance().create()
+            ),
+            LocationRepository.getInstance(
                 requireContext(),
                 LocalDataSource.getInstance(requireContext()),
                 RetrofitHelper.getInstance().create()

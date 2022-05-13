@@ -19,6 +19,7 @@ import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
 import retrofit2.create
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -72,13 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLanguageAsPreferred() {
-        Repository
-            .getInstance(
-                this,
-                LocalDataSource.getInstance(this),
-                RetrofitHelper.getInstance().create()
-            )
-            .initLanguage()
+        PreferencesRepository.getInstance(this).initLanguage()
     }
 
 

@@ -15,6 +15,8 @@ import com.youssef.weatherapp.databinding.FragmentAlertsBinding
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.utils.NetworkConnectivity
 import com.youssef.weatherapp.utils.UIHelper
@@ -65,7 +67,7 @@ class AlertsFragment : Fragment() {
 
     private fun setupViewModel() {
         val factory = AlertViewModelFactory(
-            Repository.getInstance(
+            AlertRepository.getInstance(
                 requireContext(),
                 LocalDataSource.getInstance(requireContext()),
                 RetrofitHelper.getInstance().create()
@@ -78,13 +80,7 @@ class AlertsFragment : Fragment() {
     }
 
     private fun setupFormatter() {
-        formatter = Formatter(
-            Repository.getInstance(
-                requireContext(),
-                LocalDataSource.getInstance(requireContext()),
-                RetrofitHelper.getInstance().create()
-            )
-        )
+        formatter = Formatter(PreferencesRepository.getInstance(requireContext()))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

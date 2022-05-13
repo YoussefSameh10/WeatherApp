@@ -11,6 +11,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.Key
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.DailyWeather
 import com.youssef.weatherapp.utils.Constants.Companion.iconURL
@@ -47,7 +50,7 @@ class DailyAdapter(var weatherList: List<DailyWeather>, private val formatter: F
         val iconURL = iconURL(weatherList[position].weatherCondition[0].icon)
         var request: RequestBuilder<Drawable>
         CoroutineScope(Dispatchers.IO).launch {
-            request = Glide.with(holder.imageViewWeatherIcon).load(iconURL)
+            request = Glide.with(holder.imageViewWeatherIcon).load(iconURL).signature(ObjectKey(System.currentTimeMillis()))
             withContext(Dispatchers.Main) {
                 request.placeholder(R.drawable.ic_broken_image).into(holder.imageViewWeatherIcon)
             }

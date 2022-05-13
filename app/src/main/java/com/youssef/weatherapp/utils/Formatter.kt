@@ -6,7 +6,7 @@ import androidx.annotation.RequiresApi
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
-import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepositoryInterface
 import com.youssef.weatherapp.utils.Constants.Companion.GMT
 import com.youssef.weatherapp.utils.Constants.Companion.SPEED_CONVERTER
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-class Formatter(val repo: RepositoryInterface) {
+class Formatter(val repo: PreferencesRepositoryInterface) {
     @RequiresApi(Build.VERSION_CODES.O)
     fun formatDateWithWeekDay(datetime: Long, offset: Long): String {
         val dt = LocalDateTime.ofEpochSecond(datetime, 0, ZoneOffset.ofTotalSeconds(offset.toInt()))

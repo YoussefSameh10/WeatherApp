@@ -9,11 +9,18 @@ import com.youssef.weatherapp.workmanager.RequestManager
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepositoryInterface
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddAlertViewModel(private val repo: RepositoryInterface, private val owner: LifecycleOwner, private val context: Context): ViewModel() {
+class AddAlertViewModel(
+    private val alertRepo: AlertRepositoryInterface,
+    private val locationRepo: LocationRepositoryInterface,
+    private val owner: LifecycleOwner,
+    private val context: Context
+): ViewModel() {
 
     private var _location: MutableLiveData<Location> = MutableLiveData()
 
@@ -29,7 +36,7 @@ class AddAlertViewModel(private val repo: RepositoryInterface, private val owner
                 alert.location = it
                 viewModelScope.launch(Dispatchers.IO) {
                     Log.i("TAG", "setAlert: $alert")
-                    repo.addScheduledAlert(alert)
+                    alertRepo.addScheduledAlert(alert)
                     RequestManager.addPeriodicRequest(context, alert)
                     _alert.postValue(alert)
                 }
@@ -40,7 +47,7 @@ class AddAlertViewModel(private val repo: RepositoryInterface, private val owner
     fun getCurrentLocation() {
         Log.i("TAG", "getCurrentLocation: OUUUUUUUUUUUUUUUUUUUT")
         viewModelScope.launch(Dispatchers.IO) {
-            val location = repo.getCurrentLocation()
+            val location = locationRepo.getCurrentLocation()
             withContext(Dispatchers.Main) {
                 location.observe(owner) {
                     Log.i("TAG", "getCurrentLocation: $it")

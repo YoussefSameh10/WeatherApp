@@ -5,14 +5,19 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
-import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepositoryInterface
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepositoryInterface
+import com.youssef.weatherapp.model.repo.weatherrepo.WeatherRepositoryInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : ViewModel() {
-
-    private val homeModel = HomeModel(repo)
+class HomeViewModel(
+    val weatherRepo: WeatherRepositoryInterface,
+    val locationRepo: LocationRepositoryInterface,
+    val preferencesRepo: PreferencesRepositoryInterface,
+    val owner: LifecycleOwner
+) : ViewModel() {
 
     private var _weather: MutableLiveData<Weather> = MutableLiveData()
     val weather: LiveData<Weather> get() = _weather
@@ -36,7 +41,7 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
             Log.i("TAGGGG", "getWeatherObserve: $location")
             if (location != null) {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val weather = homeModel.getWeather(location)
+                    val weather = weatherRepo.getWeather(location)
                     withContext(Dispatchers.Main) {
                         weather.observe(owner) {
                             if (it != null) {
@@ -60,26 +65,15 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
         viewModelScope.launch(Dispatchers.IO) {
             Log.i("TAG", "saveWeather: " + weather)
             if(weather.isCurrent) {
-                homeModel.deletePreviousWeather()
+                weatherRepo.deleteCurrentWeather()
             }
-            homeModel.saveCurrentWeather(weather)
+            weatherRepo.insertWeather(weather)
         }
     }
 
     private fun getCurrentLocation() {
         viewModelScope.launch(Dispatchers.IO) {
-            val location = homeModel.getCurrentLocation()
-            withContext(Dispatchers.Main) {
-                location.observe(owner) {
-                    _currentLoc.postValue(it)
-                }
-            }
-        }
-    }
-
-    private fun getFavoriteLocation() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val location = homeModel.getCurrentLocation()
+            val location = locationRepo.getCurrentLocation()
             withContext(Dispatchers.Main) {
                 location.observe(owner) {
                     _currentLoc.postValue(it)
@@ -89,6 +83,6 @@ class HomeViewModel(val repo: RepositoryInterface, val owner: LifecycleOwner) : 
     }
 
     fun isLocationSet(): Boolean {
-        return homeModel.isLocationSet()
+        return preferencesRepo.isCurrentLocationSet()
     }
 }

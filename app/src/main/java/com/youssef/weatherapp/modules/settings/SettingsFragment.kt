@@ -13,7 +13,6 @@ import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentSettingsBinding
 import com.youssef.weatherapp.modules.map.MapViewModel
-import com.youssef.weatherapp.modules.map.MapViewModelFactory
 import com.youssef.weatherapp.model.datasources.localdatasource.LocalDataSource
 import com.youssef.weatherapp.model.datasources.remotedatasource.RemoteDataSourceInterface
 import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
@@ -22,6 +21,8 @@ import com.youssef.weatherapp.model.pojo.types.LanguageType
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
 import com.youssef.weatherapp.utils.Constants.Companion.UNKNOWN_CITY
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.utils.NetworkConnectivity
@@ -69,19 +70,17 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupFormatter() {
-        val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
-        formatter = Formatter(
-            Repository.getInstance(
-                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
-            )
-        )
+        formatter = Formatter(PreferencesRepository.getInstance(requireContext()))
     }
 
     private fun setupViewModel() {
         val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
         val settingsViewModelFactory = SettingsViewModelFactory(
-            Repository.getInstance(
+            LocationRepository.getInstance(
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
+            ),
+            PreferencesRepository.getInstance(
+                requireContext()
             ),
             this,
             requireContext()
@@ -91,13 +90,8 @@ class SettingsFragment : Fragment() {
 
         Log.i("TAGAGAG", "setupViewModel: ")
 
-        val mapViewModelFactory = MapViewModelFactory(
-            Repository.getInstance(
-                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
-            ),
-            activity!!
-        )
-        mapViewModel = ViewModelProvider(activity!!, mapViewModelFactory)[MapViewModel::class.java]
+
+        mapViewModel = ViewModelProvider(activity!!)[MapViewModel::class.java]
 
     }
 
@@ -109,7 +103,18 @@ class SettingsFragment : Fragment() {
 
         (requireActivity() as MainActivity).supportActionBar?.show()
 
-        when(settingsViewModel.getLanguagePreference()) {
+        setLanguageRadioButton()
+
+        setTemperatureUnitRadioButton()
+
+        setSpeedUnitRadioButton()
+
+
+        handleViewInteractions()
+    }
+
+    private fun setLanguageRadioButton() {
+        when (settingsViewModel.getLanguagePreference()) {
             LanguageType.EN -> {
                 binding!!.radioButtonEnglish.isChecked = true
             }
@@ -117,8 +122,10 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonArabic.isChecked = true
             }
         }
+    }
 
-        when(settingsViewModel.getTemperatureUnitPreference()) {
+    private fun setTemperatureUnitRadioButton() {
+        when (settingsViewModel.getTemperatureUnitPreference()) {
             TemperatureUnitType.CELSIUS -> {
                 binding!!.radioButtonCelsius.isChecked = true
             }
@@ -129,8 +136,10 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonKelvin.isChecked = true
             }
         }
+    }
 
-        when(settingsViewModel.getSpeedUnitPreference()) {
+    private fun setSpeedUnitRadioButton() {
+        when (settingsViewModel.getSpeedUnitPreference()) {
             SpeedUnitType.MPS -> {
                 binding!!.radioButtonMPS.isChecked = true
             }
@@ -138,9 +147,6 @@ class SettingsFragment : Fragment() {
                 binding!!.radioButtonMPH.isChecked = true
             }
         }
-
-
-        handleViewInteractions()
     }
 
     private fun handleViewInteractions() {
@@ -154,22 +160,74 @@ class SettingsFragment : Fragment() {
 
     private fun handleSpeedUnitChange() {
         binding!!.radioButtonMPS.setOnClickListener {
-            settingsViewModel.setSpeedUnit(SpeedUnitType.MPS)
+
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setSpeedUnit(SpeedUnitType.MPS)
+            }
+            else {
+                setSpeedUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonMPH.setOnClickListener {
-            settingsViewModel.setSpeedUnit(SpeedUnitType.MPH)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setSpeedUnit(SpeedUnitType.MPH)
+            }
+            else {
+                setSpeedUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
+
         }
     }
 
     private fun handleTemperatureUnitChange() {
         binding!!.radioButtonCelsius.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.CELSIUS)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.CELSIUS)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonFahrenheit.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.FAHRENHEIT)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.FAHRENHEIT)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
         binding!!.radioButtonKelvin.setOnClickListener {
-            settingsViewModel.setTemperatureUnit(TemperatureUnitType.KELVIN)
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                settingsViewModel.setTemperatureUnit(TemperatureUnitType.KELVIN)
+            }
+            else {
+                setTemperatureUnitRadioButton()
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_change_preferences_message)
+                )
+            }
         }
     }
 
@@ -208,6 +266,19 @@ class SettingsFragment : Fragment() {
         }
 
         binding!!.textViewMap.setOnClickListener {
+            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
+                mapViewModel.navigateFromSettingsToMap(this)
+            }
+            else {
+                UIHelper.showAlertDialog(
+                    requireContext(),
+                    getString(R.string.no_connection),
+                    getString(R.string.no_connection_message)
+                )
+            }
+        }
+
+        binding!!.textViewCityName.setOnClickListener {
             if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
                 mapViewModel.navigateFromSettingsToMap(this)
             }
