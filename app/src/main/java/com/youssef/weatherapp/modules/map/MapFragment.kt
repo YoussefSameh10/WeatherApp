@@ -55,14 +55,8 @@ class MapFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
-        val factory = MapViewModelFactory(
-            Repository.getInstance(
-                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
-            ),
-            this,
-        )
-        mapViewModel = ViewModelProvider(activity!!, factory)[MapViewModel::class.java]
+
+        mapViewModel = ViewModelProvider(activity!!)[MapViewModel::class.java]
 
 
         mapViewModel.location.observe(viewLifecycleOwner) {

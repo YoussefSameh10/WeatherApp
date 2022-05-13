@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.CurrentWeather
 import com.youssef.weatherapp.utils.Constants.Companion.iconURL

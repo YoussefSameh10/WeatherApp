@@ -20,6 +20,9 @@ import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.repo.Repository
 import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepository
+import com.youssef.weatherapp.model.repo.alertrepo.AlertRepositoryInterface
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
 import com.youssef.weatherapp.utils.Constants.Companion.SCHEDULED_ALERT
 import com.youssef.weatherapp.utils.Formatter
 import com.youssef.weatherapp.utils.Serializer
@@ -31,7 +34,7 @@ import java.time.LocalDateTime
 
 class AlertsWorkManager(val context: Context, private val workerParams: WorkerParameters): Worker(context, workerParams) {
 
-    private lateinit var repo: RepositoryInterface
+    private lateinit var repo: AlertRepositoryInterface
     private lateinit var formatter: Formatter
 
 
@@ -40,12 +43,15 @@ class AlertsWorkManager(val context: Context, private val workerParams: WorkerPa
     override fun doWork(): Result {
         Log.i("TAG", "doWork: ")
 
-        repo = Repository.getInstance(
+        repo = AlertRepository.getInstance(
             context,
             LocalDataSource.getInstance(context),
             RetrofitHelper.getInstance().create(RemoteDataSourceInterface::class.java)
         )
-        formatter = Formatter(repo)
+        formatter = Formatter(
+            PreferencesRepository.getInstance(
+            context
+        ))
 
         val scheduledAlert =
             Serializer.deserializeScheduledAlert(workerParams.inputData.keyValueMap[SCHEDULED_ALERT] as String)

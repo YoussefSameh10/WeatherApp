@@ -20,7 +20,8 @@ import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.types.LanguageType
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
 import com.youssef.weatherapp.model.pojo.types.TemperatureUnitType
-import com.youssef.weatherapp.model.repo.RepositoryInterface
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepositoryInterface
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepositoryInterface
 import com.youssef.weatherapp.utils.Constants
 import com.youssef.weatherapp.utils.Event
 import com.youssef.weatherapp.utils.NetworkConnectivity
@@ -28,9 +29,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel(private val repo: RepositoryInterface, private val owner: LifecycleOwner, private val context: Context) : ViewModel() {
-
-    var settingsModel: SettingsModel = SettingsModel(repo)
+class SettingsViewModel(
+    private val locationRepo: LocationRepositoryInterface,
+    private val preferencesRepo: PreferencesRepositoryInterface,
+    private val owner: LifecycleOwner,
+    private val context: Context
+) : ViewModel() {
 
     private var _currentLoc: MutableLiveData<Event<Location?>> = MutableLiveData()
     val currentLoc: LiveData<Event<Location?>> get() = _currentLoc
@@ -48,7 +52,7 @@ class SettingsViewModel(private val repo: RepositoryInterface, private val owner
 
     private fun getCurrentLocation() {
         viewModelScope.launch(Dispatchers.IO) {
-            val x = settingsModel.getCurrentLocation()
+            val x = locationRepo.getCurrentLocation()
 
             withContext(Dispatchers.Main) {
                 x.observe(owner) {
@@ -64,7 +68,8 @@ class SettingsViewModel(private val repo: RepositoryInterface, private val owner
     fun getCityName(latitude: Double, longitude: Double) {
         if(NetworkConnectivity.isNetworkAvailable(context))
         viewModelScope.launch(Dispatchers.IO) {
-            val cityNameLive = settingsModel.getCityName(latitude, longitude)
+            val cityNameLive: MutableLiveData<String> = MutableLiveData()
+            cityNameLive.postValue(locationRepo.getCityName(latitude, longitude))
             withContext(Dispatchers.Main) {
                 cityNameLive.observe(owner) {
                     cityName = it
@@ -79,36 +84,36 @@ class SettingsViewModel(private val repo: RepositoryInterface, private val owner
         viewModelScope.launch(Dispatchers.IO) {
             Log.i("TAGs", "setCurrentLocation: ")
             //_currentLoc.postValue(location)
-            settingsModel.setCurrentLocation(location)
+            locationRepo.addCurrentLocation(location)
         }
     }
 
     fun getLanguagePreference(): LanguageType {
-        return settingsModel.getLanguagePreference()
+        return preferencesRepo.getLanguage()
     }
 
     fun getTemperatureUnitPreference(): TemperatureUnitType {
-        return settingsModel.getTemperatureUnitPreference()
+        return preferencesRepo.getTemperatureUnit()
     }
 
     fun getSpeedUnitPreference(): SpeedUnitType {
-        return settingsModel.getSpeedUnitPreference()
+        return preferencesRepo.getSpeedUnit()
     }
 
     fun setLanguage(language: LanguageType) {
-        settingsModel.setLanguage(language)
+        preferencesRepo.setLanguage(language)
     }
 
     fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
-        settingsModel.setTemperatureUnit(temperatureUnit)
+        preferencesRepo.setTemperatureUnit(temperatureUnit)
     }
 
     fun setSpeedUnit(speedUnit: SpeedUnitType) {
-        settingsModel.setSpeedUnit(speedUnit)
+        preferencesRepo.setSpeedUnit(speedUnit)
     }
 
     fun setIsLocationSet() {
-        settingsModel.setIsLocationSet()
+        preferencesRepo.setIsCurrentLocationSet(true)
     }
 
     fun handleGPS(activity: FragmentActivity, context: Context) {

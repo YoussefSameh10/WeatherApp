@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.youssef.weatherapp.MainActivity
 import com.youssef.weatherapp.R
 import com.youssef.weatherapp.databinding.FragmentHomeBinding
@@ -24,6 +25,10 @@ import com.youssef.weatherapp.model.datasources.remotedatasource.RetrofitHelper
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.Weather
 import com.youssef.weatherapp.model.repo.Repository
+import com.youssef.weatherapp.model.repo.locationrepo.LocationRepository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepository
+import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepositoryInterface
+import com.youssef.weatherapp.model.repo.weatherrepo.WeatherRepository
 import com.youssef.weatherapp.utils.Constants.Companion.FAVORITE_LOCATION
 import com.youssef.weatherapp.utils.Constants.Companion.iconURL
 import com.youssef.weatherapp.utils.Formatter
@@ -81,19 +86,20 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupFormatter() {
-        val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
-        formatter = Formatter(
-            Repository.getInstance(
-                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
-            )
-        )
+        formatter = Formatter(PreferencesRepository.getInstance(requireContext()))
     }
 
     private fun setupViewModel() {
         val remoteSource = RetrofitHelper.getInstance().create<RemoteDataSourceInterface>()
         val homeViewModelFactory = HomeViewModelFactory(
-            Repository.getInstance(
+            WeatherRepository.getInstance(
                 requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
+            ),
+            LocationRepository.getInstance(
+                requireContext(), LocalDataSource.getInstance(requireContext()), remoteSource
+            ),
+            PreferencesRepository.getInstance(
+                requireContext()
             ),
             this
         )
@@ -179,7 +185,7 @@ class HomeFragment : Fragment() {
         var request: RequestBuilder<Drawable>
         CoroutineScope(Dispatchers.IO).launch {
             val iconURL = iconURL(weather.currentWeather.weatherCondition[0].icon)
-            request = Glide.with(this@HomeFragment).load(iconURL).dontAnimate()
+            request = Glide.with(this@HomeFragment).load(iconURL)
             withContext(Dispatchers.Main) {
                 request.placeholder(R.drawable.ic_broken_image).into(binding.imageViewWeatherIcon)
             }
