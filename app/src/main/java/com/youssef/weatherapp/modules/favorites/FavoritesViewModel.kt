@@ -1,11 +1,16 @@
 package com.youssef.weatherapp.modules.favorites
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
+import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.repo.RepositoryInterface
 import com.youssef.weatherapp.model.repo.locationrepo.LocationRepositoryInterface
 import com.youssef.weatherapp.utils.Event
+import com.youssef.weatherapp.utils.NetworkConnectivity
+import com.youssef.weatherapp.utils.UIHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -65,6 +70,17 @@ class FavoritesViewModel(private val repo: LocationRepositoryInterface, private 
     fun deleteFavoriteLocation(location: Location) {
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteFavoriteLocation(location)
+        }
+    }
+
+    var showConnectionErrorDialog = {}
+
+    fun handleAdd(fragment: FavoritesFragment, context: Context) {
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            fragment.findNavController().navigate(R.id.fragment_map)
+        }
+        else {
+            showConnectionErrorDialog()
         }
     }
 }

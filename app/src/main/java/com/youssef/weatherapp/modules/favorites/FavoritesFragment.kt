@@ -100,17 +100,8 @@ class FavoritesFragment : Fragment() {
         }
 
         binding.buttonAdd.setOnClickListener() {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                findNavController().navigate(R.id.fragment_map)
-            }
-            else {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_add_favorite_message)
-                )
-            }
-
+            favoritesViewModel.showConnectionErrorDialog = showConnectionErrorDialog
+            favoritesViewModel.handleAdd(this, requireContext())
         }
 
         handleLocationClicked()
@@ -172,6 +163,14 @@ class FavoritesFragment : Fragment() {
                 favoritesViewModel.addFavoriteLocation(location)
             }
         }
+    }
+
+    private val showConnectionErrorDialog = {
+        UIHelper.showAlertDialog(
+            requireContext(),
+            getString(R.string.no_connection),
+            getString(R.string.no_connection_add_favorite_message)
+        )
     }
 
 }

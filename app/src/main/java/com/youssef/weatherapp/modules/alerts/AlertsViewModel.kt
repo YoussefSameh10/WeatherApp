@@ -2,11 +2,16 @@ package com.youssef.weatherapp.modules.alerts
 
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
+import com.youssef.weatherapp.R
 import com.youssef.weatherapp.workmanager.RequestManager
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.ScheduledAlert
 import com.youssef.weatherapp.model.repo.alertrepo.AlertRepositoryInterface
+import com.youssef.weatherapp.utils.NetworkConnectivity
+import com.youssef.weatherapp.utils.UIHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,6 +63,17 @@ class AlertsViewModel(
             repo.deleteScheduledAlert(dbAlert!!)
         }
         RequestManager.deleteRequest(context)
+    }
+
+    var showConnectionErrorDialog = {}
+
+    fun handleAddButton(fragment: AlertsFragment) {
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            fragment.findNavController().navigate(R.id.fragment_add_alert)
+        }
+        else {
+            showConnectionErrorDialog()
+        }
     }
 
 }
