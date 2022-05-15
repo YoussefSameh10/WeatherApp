@@ -106,19 +106,16 @@ class AlertsFragment : Fragment() {
 
         handleDelete()
 
+        handleAdd()
+    }
+
+    private fun handleAdd() {
         binding.buttonAdd.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                findNavController().navigate(R.id.fragment_add_alert)
-            }
-            else {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_add_alert_message)
-                )
-            }
+            alertsViewModel.showConnectionErrorDialog = showConnectionErrorDialog
+            alertsViewModel.handleAddButton(this)
         }
     }
+
 
     private fun showViews() {
         Log.i("TAG", "showViews: ")
@@ -131,6 +128,14 @@ class AlertsFragment : Fragment() {
         binding.cardViewAlert.visibility = View.GONE
         binding.textViewNoAlertsAdded.visibility = View.VISIBLE
         binding.buttonAdd.visibility = View.VISIBLE
+    }
+
+    private var showConnectionErrorDialog = {
+        UIHelper.showAlertDialog(
+            requireContext(),
+            getString(R.string.no_connection),
+            getString(R.string.no_connection_add_alert_message)
+        )
     }
 
     private fun handleDelete() {

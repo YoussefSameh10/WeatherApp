@@ -39,8 +39,6 @@ class SettingsFragment : Fragment() {
 
     private lateinit var formatter: Formatter
 
-    private var hasJustOpened = true
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,23 +95,27 @@ class SettingsFragment : Fragment() {
 
     private fun setupView() {
 
-        progressDialog = ProgressDialog(requireContext())
-        progressDialog.setTitle(getString(R.string.loading))
-        progressDialog.setCancelable(false)
-
-        (requireActivity() as MainActivity).supportActionBar?.show()
+        showProgressDialog()
+        showActionBar()
 
         setLanguageRadioButton()
-
         setTemperatureUnitRadioButton()
-
         setSpeedUnitRadioButton()
-
 
         handleViewInteractions()
     }
 
-    private fun setLanguageRadioButton() {
+    private fun showProgressDialog() {
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle(getString(R.string.loading))
+        progressDialog.setCancelable(false)
+    }
+
+    private fun showActionBar() {
+        (requireActivity() as MainActivity).supportActionBar?.show()
+    }
+
+    private val setLanguageRadioButton = {
         when (settingsViewModel.getLanguagePreference()) {
             LanguageType.EN -> {
                 binding!!.radioButtonEnglish.isChecked = true
@@ -124,7 +126,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun setTemperatureUnitRadioButton() {
+    private val setTemperatureUnitRadioButton = {
         when (settingsViewModel.getTemperatureUnitPreference()) {
             TemperatureUnitType.CELSIUS -> {
                 binding!!.radioButtonCelsius.isChecked = true
@@ -138,7 +140,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun setSpeedUnitRadioButton() {
+    private val setSpeedUnitRadioButton = {
         when (settingsViewModel.getSpeedUnitPreference()) {
             SpeedUnitType.MPS -> {
                 binding!!.radioButtonMPS.isChecked = true
@@ -154,81 +156,6 @@ class SettingsFragment : Fragment() {
         handleTemperatureUnitChange()
         handleSpeedUnitChange()
         handleLocationMethodChange()
-    }
-
-
-
-    private fun handleSpeedUnitChange() {
-        binding!!.radioButtonMPS.setOnClickListener {
-
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                settingsViewModel.setSpeedUnit(SpeedUnitType.MPS)
-            }
-            else {
-                setSpeedUnitRadioButton()
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_change_preferences_message)
-                )
-            }
-        }
-        binding!!.radioButtonMPH.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                settingsViewModel.setSpeedUnit(SpeedUnitType.MPH)
-            }
-            else {
-                setSpeedUnitRadioButton()
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_change_preferences_message)
-                )
-            }
-
-        }
-    }
-
-    private fun handleTemperatureUnitChange() {
-        binding!!.radioButtonCelsius.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                settingsViewModel.setTemperatureUnit(TemperatureUnitType.CELSIUS)
-            }
-            else {
-                setTemperatureUnitRadioButton()
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_change_preferences_message)
-                )
-            }
-        }
-        binding!!.radioButtonFahrenheit.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                settingsViewModel.setTemperatureUnit(TemperatureUnitType.FAHRENHEIT)
-            }
-            else {
-                setTemperatureUnitRadioButton()
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_change_preferences_message)
-                )
-            }
-        }
-        binding!!.radioButtonKelvin.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                settingsViewModel.setTemperatureUnit(TemperatureUnitType.KELVIN)
-            }
-            else {
-                setTemperatureUnitRadioButton()
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_change_preferences_message)
-                )
-            }
-        }
     }
 
     private fun handleLanguageChange() {
@@ -250,49 +177,60 @@ class SettingsFragment : Fragment() {
         activity!!.overridePendingTransition(0, 0)
     }
 
+    private fun handleTemperatureUnitChange() {
+        binding!!.radioButtonCelsius.setOnClickListener {
+            handleTemperatureRadioButton(TemperatureUnitType.CELSIUS)
+        }
+        binding!!.radioButtonFahrenheit.setOnClickListener {
+            handleTemperatureRadioButton(TemperatureUnitType.FAHRENHEIT)
+        }
+        binding!!.radioButtonKelvin.setOnClickListener {
+            handleTemperatureRadioButton(TemperatureUnitType.KELVIN)
+        }
+    }
+
+    private fun handleTemperatureRadioButton(temperatureUnit: TemperatureUnitType) {
+        settingsViewModel.setTemperatureUnitRadioButton = setTemperatureUnitRadioButton
+        settingsViewModel.showChangePreferenceAlertDialog = showChangePreferenceAlert
+        settingsViewModel.handleTemperatureRadioButtons(temperatureUnit)
+    }
+
+    private fun handleSpeedUnitChange() {
+        binding!!.radioButtonMPS.setOnClickListener {
+            handleSpeedRadioButton(SpeedUnitType.MPS)
+        }
+        binding!!.radioButtonMPH.setOnClickListener {
+            handleSpeedRadioButton(SpeedUnitType.MPH)
+        }
+    }
+
+    private fun handleSpeedRadioButton(speedUnit: SpeedUnitType) {
+        settingsViewModel.setSpeedUnitRadioButton = setSpeedUnitRadioButton
+        settingsViewModel.showChangePreferenceAlertDialog = showChangePreferenceAlert
+        settingsViewModel.handleSpeedRadioButtons(speedUnit)
+    }
+
     private fun handleLocationMethodChange() {
         binding!!.textViewGPS.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                progressDialog.show()
-                settingsViewModel.handleGPS(activity!!, requireContext())
-            }
-            else {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_message)
-                )
-            }
+            handleLocationOption(isGPS = true)
         }
 
         binding!!.textViewMap.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                mapViewModel.navigateFromSettingsToMap(this)
-            }
-            else {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_message)
-                )
-            }
+            handleLocationOption(isGPS = false)
         }
 
         binding!!.textViewCityName.setOnClickListener {
-            if(NetworkConnectivity.isNetworkAvailable(requireContext())) {
-                mapViewModel.navigateFromSettingsToMap(this)
-            }
-            else {
-                UIHelper.showAlertDialog(
-                    requireContext(),
-                    getString(R.string.no_connection),
-                    getString(R.string.no_connection_message)
-                )
-            }
+            handleLocationOption(isGPS = false)
         }
 
         listenToLocationChange()
         listenToMapLocationChange()
+    }
+
+    private fun handleLocationOption(isGPS: Boolean) {
+        settingsViewModel.showChangeLocationAlertDialog = showChangeLocationAlert
+        settingsViewModel.showProgressDialog = { progressDialog.show() }
+        settingsViewModel.handleLocationMethodChange(requireActivity(), this, isGPS)
     }
 
     private fun listenToLocationChange() {
@@ -313,14 +251,9 @@ class SettingsFragment : Fragment() {
                     binding!!.textViewCoords.visibility = View.GONE
                 }
                 progressDialog.dismiss()
-                if(!hasJustOpened) {
-                    informNewLocation(it)
-                }
-                hasJustOpened = false
             }
         }
     }
-
 
     private fun listenToMapLocationChange() {
         Log.i("TAGs", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
@@ -343,4 +276,19 @@ class SettingsFragment : Fragment() {
         UIHelper.showAlertDialog(requireContext(), title = location.name, message = message)
     }
 
+    private val showChangePreferenceAlert = {
+        UIHelper.showAlertDialog(
+            requireContext(),
+            getString(R.string.no_connection),
+            getString(R.string.no_connection_change_preferences_message)
+        )
+    }
+
+    private val showChangeLocationAlert = {
+        UIHelper.showAlertDialog(
+            requireContext(),
+            getString(R.string.no_connection),
+            getString(R.string.no_connection_message)
+        )
+    }
 }

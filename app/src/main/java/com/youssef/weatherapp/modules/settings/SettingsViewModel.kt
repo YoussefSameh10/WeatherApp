@@ -10,12 +10,15 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.youssef.weatherapp.R
 import com.youssef.weatherapp.model.pojo.Location
 import com.youssef.weatherapp.model.pojo.types.LanguageType
 import com.youssef.weatherapp.model.pojo.types.SpeedUnitType
@@ -25,6 +28,7 @@ import com.youssef.weatherapp.model.repo.preferencesrepo.PreferencesRepositoryIn
 import com.youssef.weatherapp.utils.Constants
 import com.youssef.weatherapp.utils.Event
 import com.youssef.weatherapp.utils.NetworkConnectivity
+import com.youssef.weatherapp.utils.UIHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -83,7 +87,6 @@ class SettingsViewModel(
     private fun setCurrentLocation(location: Location) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.i("TAGs", "setCurrentLocation: ")
-            //_currentLoc.postValue(location)
             locationRepo.addCurrentLocation(location)
         }
     }
@@ -104,11 +107,11 @@ class SettingsViewModel(
         preferencesRepo.setLanguage(language)
     }
 
-    fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
+    private fun setTemperatureUnit(temperatureUnit: TemperatureUnitType) {
         preferencesRepo.setTemperatureUnit(temperatureUnit)
     }
 
-    fun setSpeedUnit(speedUnit: SpeedUnitType) {
+    private fun setSpeedUnit(speedUnit: SpeedUnitType) {
         preferencesRepo.setSpeedUnit(speedUnit)
     }
 
@@ -116,7 +119,7 @@ class SettingsViewModel(
         preferencesRepo.setIsCurrentLocationSet(true)
     }
 
-    fun handleGPS(activity: FragmentActivity, context: Context) {
+    private fun handleGPS(activity: FragmentActivity, context: Context) {
         if(!checkLocationPermitted(context)) {
             ActivityCompat.requestPermissions(
                 activity,
@@ -160,6 +163,51 @@ class SettingsViewModel(
             }
         }
         client.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper()!!)
+    }
+
+    var setTemperatureUnitRadioButton = {}
+    var setSpeedUnitRadioButton = {}
+    var showChangePreferenceAlertDialog = {}
+    var showChangeLocationAlertDialog = {}
+    var showProgressDialog = {}
+
+    fun handleTemperatureRadioButtons(temperatureUnit: TemperatureUnitType) {
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            setTemperatureUnit(temperatureUnit)
+        }
+        else {
+            showChangePreferenceAlertDialog()
+            setTemperatureUnitRadioButton()
+        }
+    }
+
+    fun handleSpeedRadioButtons(speedUnit: SpeedUnitType) {
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            setSpeedUnit(speedUnit)
+        }
+        else {
+            showChangePreferenceAlertDialog()
+            setSpeedUnitRadioButton()
+        }
+    }
+
+    fun handleLocationMethodChange(activity: FragmentActivity, fragment: Fragment, isGPS: Boolean) {
+        if(NetworkConnectivity.isNetworkAvailable(context)) {
+            if(isGPS) {
+                showProgressDialog()
+                handleGPS(activity, context)
+            }
+            else {
+                navigateFromSettingsToMap(fragment)
+            }
+        }
+        else {
+            showChangeLocationAlertDialog()
+        }
+    }
+
+    private fun navigateFromSettingsToMap(fragment: Fragment) {
+        fragment.findNavController().navigate(R.id.fragment_map)
     }
 
 }
