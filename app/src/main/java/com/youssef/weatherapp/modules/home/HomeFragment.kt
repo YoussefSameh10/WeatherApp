@@ -147,6 +147,7 @@ class HomeFragment : Fragment() {
             else if(it != null) {
                 setupView(it)
             }
+            Log.i("TAGAAA", "listenForWeatherChange: $it")
             progressDialog.dismiss()
         }
     }
@@ -155,6 +156,7 @@ class HomeFragment : Fragment() {
         progressDialog = ProgressDialog(requireContext())
         progressDialog.setTitle(getString(R.string.loading))
         progressDialog.setCancelable(false)
+        Log.i("TAGAAA", "prepareViewsForLoadingState: ")
         progressDialog.show()
         binding.cardViewCurrentWeather.visibility = View.GONE
     }
