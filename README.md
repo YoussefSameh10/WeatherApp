@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="https://raw.githubusercontent.com/YoussefSameh10/WeatherApp/main/README%20Assets/App%20Icon.png" alt="Build Status" width="300">
+   <img src="https://raw.github.com/YoussefSameh10/WeatherApp/blob/main/README%20Assets/App%20Icon.png?raw=true" alt="Build Status" width="300">
 </p>
 <h1 align="center"> Weather App </h1>
 
