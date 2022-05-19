@@ -238,7 +238,8 @@ class SettingsFragment : Fragment() {
 
         settingsViewModel.currentLoc.removeObservers(viewLifecycleOwner)
         settingsViewModel.currentLoc.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let {
+            Log.i("TAG", "listenToLocationChange: 1")
+            it.peekContent()?.let {
                 settingsViewModel.setIsLocationSet()
                 Log.i("TAG", "listenToLocationChange: " + it)
                 binding!!.textViewCityName.text = formatter.formatCityName(it.name)
@@ -258,6 +259,7 @@ class SettingsFragment : Fragment() {
     private fun listenToMapLocationChange() {
         Log.i("TAGs", "listenToMapLocationChangeOUT: " + mapViewModel.finalLocation)
         mapViewModel.finalLocation.observe(viewLifecycleOwner) {
+            Log.i("TAG", "listenToMapLocationChange: 1")
             it.getContentIfNotHandled()?.let {
                 Log.i("TAG", "listenToMapLocationChange: ")
                 progressDialog.show()

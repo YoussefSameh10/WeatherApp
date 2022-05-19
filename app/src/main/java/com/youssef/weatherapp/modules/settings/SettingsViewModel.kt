@@ -126,7 +126,8 @@ class SettingsViewModel(
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
                 Constants.GPS_PERMISSION_CODE
             )
-            handleGPS(activity, context)
+            Log.i("TAGAAA", "handleGPS: ")
+            //handleGPS(activity, context)
             return
         }
         val locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -148,6 +149,7 @@ class SettingsViewModel(
 
     @SuppressLint("MissingPermission")
     fun getLocation(activity: FragmentActivity) {
+        showProgressDialog()
         val client = LocationServices.getFusedLocationProviderClient(activity)
         val locationRequest = LocationRequest.create()
         locationRequest.interval =1000
@@ -194,7 +196,7 @@ class SettingsViewModel(
     fun handleLocationMethodChange(activity: FragmentActivity, fragment: Fragment, isGPS: Boolean) {
         if(NetworkConnectivity.isNetworkAvailable(context)) {
             if(isGPS) {
-                showProgressDialog()
+                //showProgressDialog()
                 handleGPS(activity, context)
             }
             else {
