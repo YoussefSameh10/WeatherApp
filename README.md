@@ -3,6 +3,8 @@
 </p>
 <h1 align="center"> Weather App </h1>
 
+Target SDK: 32
+
 # Basic Overview
 
 Weather App enables you to view the weather details of any place you want. You can add any number of places to your favorites, get weather alerts for your current place and many more. 
